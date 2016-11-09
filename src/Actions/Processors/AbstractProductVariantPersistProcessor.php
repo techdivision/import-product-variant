@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkAction
+ * TechDivision\Import\Product\Variant\Actions\Processors\AbstractProductVariantPersistProcessor
  *
  * NOTICE OF LICENSE
  *
@@ -18,12 +18,13 @@
  * @link      http://www.appserver.io
  */
 
-namespace TechDivision\Import\Product\Variant\Actions;
+namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
-use TechDivision\Import\Actions\AbstractAction;
+use TechDivision\Import\Product\Variant\Utils\SqlStatements;
+use TechDivision\Import\Actions\Processors\AbstractPersistProcessor;
 
 /**
- * A SLSB providing repository functionality for product super link CRUD actions.
+ * The product category persist processor implementation.
  *
  * @author    Tim Wagner <tw@appserver.io>
  * @copyright 2015 TechDivision GmbH <info@appserver.io>
@@ -31,6 +32,17 @@ use TechDivision\Import\Actions\AbstractAction;
  * @link      https://github.com/wagnert/csv-import
  * @link      http://www.appserver.io
  */
-class ProductSuperLinkAction extends AbstractAction
+abstract class AbstractProductVariantPersistProcessor extends AbstractPersistProcessor
 {
+
+    /**
+     * Return's the passed statement from the Magento specific
+     * utility class.
+     *
+     * @return string The utility class name
+     */
+    protected function getUtilityClassName()
+    {
+        return SqlStatements::getUtilityClassName($this->getMagentoEdition(), $this->getMagentoVersion());
+    }
 }

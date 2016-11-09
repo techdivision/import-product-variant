@@ -20,6 +20,8 @@
 
 namespace TechDivision\Import\Product\Variant\Actions;
 
+use TechDivision\Import\Actions\AbstractAction;
+
 /**
  * A SLSB providing repository functionality for product super attribute CRUD actions.
  *

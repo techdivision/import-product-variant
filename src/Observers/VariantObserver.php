@@ -20,10 +20,10 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
-use TechDivision\Import\Product\Variant\Utils\MemberNames;
-use TechDivision\Import\Product\Variant\Observers\Product\AbstractProductImportObserver;
+use TechDivision\Import\Utils\StoreViewCodes;
+use TechDivision\Import\Product\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
-use TechDivision\Import\Product\Variant\Utils\StoreViewCodes;
+use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
 
 /**
  * A SLSB that handles the process to import product bunches.

@@ -29,7 +29,7 @@ namespace TechDivision\Import\Product\Variant\Actions\Processors;
  * @link      https://github.com/wagnert/csv-import
  * @link      http://www.appserver.io
  */
-class ProductSuperAttributePersistProcessor extends AbstractPersistProcessor
+class ProductSuperAttributePersistProcessor extends AbstractProductVariantPersistProcessor
 {
 
     /**

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Observers\ProductVariationObserver
+ * TechDivision\Import\Product\Variant\Observers\ProductVariantObserver
  *
  * NOTICE OF LICENSE
  *
@@ -20,10 +20,9 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
+use TechDivision\Import\Utils\ProductTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
-use TechDivision\Import\Product\Variant\Observers\AbstractObserver;
-use TechDivision\Import\Product\Variant\Observers\Product\AbstractProductImportObserver;
-use TechDivision\Import\Product\Variant\Utils\ProductTypes;
+use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
 
 /**
  * A SLSB that handles the process to import product bunches.
@@ -34,7 +33,7 @@ use TechDivision\Import\Product\Variant\Utils\ProductTypes;
  * @link      https://github.com/wagnert/csv-import
  * @link      http://www.appserver.io
  */
-class ProductVariationObserver extends AbstractProductImportObserver
+class ProductVariantObserver extends AbstractProductImportObserver
 {
 
     /**
@@ -136,6 +135,6 @@ class ProductVariationObserver extends AbstractProductImportObserver
      */
     public function addArtefacts(array $artefacts)
     {
-        $this->getSubject()->addArtefacts(ProductVariationObserver::ARTEFACT_TYPE, $artefacts);
+        $this->getSubject()->addArtefacts(ProductVariantObserver::ARTEFACT_TYPE, $artefacts);
     }
 }

@@ -103,6 +103,26 @@ interface ProductVariantProcessorInterface
     public function getProductSuperLinkAction();
 
     /**
+     * Return's the attribute option value with the passed value and store ID.
+     *
+     * @param mixed   $value   The option value
+     * @param integer $storeId The ID of the store
+     *
+     * @return array|boolean The attribute option value instance
+     */
+    public function getEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId);
+
+    /**
+     * Return's the first EAV attribute for the passed option value and store ID.
+     *
+     * @param string $optionValue The option value of the EAV attributes
+     * @param string $storeId     The store ID of the EAV attribues
+     *
+     * @return array The array with the EAV attribute
+     */
+    public function getEavAttributeByOptionValueAndStoreId($optionValue, $storeId);
+
+    /**
      * Persist's the passed product relation data and return's the ID.
      *
      * @param array $product The product relation data to persist

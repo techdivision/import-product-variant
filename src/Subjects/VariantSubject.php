@@ -20,7 +20,9 @@
 
 namespace TechDivision\Import\Product\Variant\Subjects;
 
-use TechDivision\Import\Product\Variant\Utils\RegistryKeys;
+use TechDivision\Import\Utils\RegistryKeys;
+use TechDivision\Import\Subjects\AbstractSubject;
+use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface;
 
 /**
  * A SLSB that handles the process to import product variants.
@@ -33,6 +35,13 @@ use TechDivision\Import\Product\Variant\Utils\RegistryKeys;
  */
 class VariantSubject extends AbstractSubject
 {
+
+    /**
+     * The processor to write the necessary product variant data.
+     *
+     * @var \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface
+     */
+    protected $productProcessor;
 
     /**
      * The ID of the parent product to relate the variant with.
@@ -54,6 +63,28 @@ class VariantSubject extends AbstractSubject
      * @var array
      */
     protected $skuEntityIdMapping = array();
+
+    /**
+     * Set's the product variant processor instance.
+     *
+     * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productProcessor The product variant processor instance
+     *
+     * @return void
+     */
+    public function setProductProcessor(ProductVariantProcessorInterface $productProcessor)
+    {
+        $this->productProcessor = $productProcessor;
+    }
+
+    /**
+     * Return's the product variant processor instance.
+     *
+     * @return \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface The product variant processor instance
+     */
+    public function getProductProcessor()
+    {
+        return $this->productProcessor;
+    }
 
     /**
      * Intializes the previously loaded global data for exactly one variants.

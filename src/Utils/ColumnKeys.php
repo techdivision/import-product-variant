@@ -20,7 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Utils;
 
-use TechDivision\Import\Product\Variant\Utils\ColumnKeys as FallbackColumnKeys
+use TechDivision\Import\Product\Utils\ColumnKeys as FallbackColumnKeys;
 
 /**
  * Utility class containing the CSV column names.
@@ -52,18 +52,18 @@ class ColumnKeys extends FallbackColumnKeys
     }
 
     /**
-     * Name for the column 'product_type'.
+     * Name for the column 'configurable_variations'.
      *
      * @var string
      */
-    const PRODUCT_TYPE = 'product_type';
+    const CONFIGURABLE_VARIATIONS = 'configurable_variations';
 
     /**
-     * Name for the column 'store_view_code'.
+     * Name for the column 'configurable_variation_labels'.
      *
      * @var string
      */
-    const STORE_VIEW_CODE = 'store_view_code';
+    const CONFIGURABLE_VARIATION_LABELS = 'configurable_variation_labels';
 
     /**
      * Name for the column 'variant_parent_sku'.

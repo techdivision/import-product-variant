@@ -40,6 +40,20 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     protected $connection;
 
     /**
+     * The repository to access EAV attribute set.
+     *
+     * @var \TechDivision\Import\Product\Repositories\EavAttributeSetRepository
+     */
+    protected $eavAttributeSetRepository;
+
+    /**
+     * The repository to access EAV attribute option values.
+     *
+     * @var \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository
+     */
+    protected $eavAttributeOptionValueRepository;
+
+    /**
      * The action for product relation CRUD methods.
      *
      * @var \TechDivision\Import\Product\Variant\Actions\ProductRelationAction
@@ -134,6 +148,50 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     }
 
     /**
+     * Set's the repository to access EAV attributes.
+     *
+     * @param \TechDivision\Import\Product\Repositories\EavAttributeRepository $eavAttributeRepository The repository to access EAV attributes
+     *
+     * @return void
+     */
+    public function setEavAttributeRepository($eavAttributeRepository)
+    {
+        $this->eavAttributeRepository = $eavAttributeRepository;
+    }
+
+    /**
+     * Return's the repository to access EAV attributes.
+     *
+     * @return \TechDivision\Import\Product\Repositories\EavAttributeRepository The repository instance
+     */
+    public function getEavAttributeRepository()
+    {
+        return $this->eavAttributeRepository;
+    }
+
+    /**
+     * Set's the repository to access EAV attribute option values.
+     *
+     * @param \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository $eavAttributeOptionValueRepository The repository to access EAV attribute option values
+     *
+     * @return void
+     */
+    public function setEavAttributeOptionValueRepository($eavAttributeOptionValueRepository)
+    {
+        $this->eavAttributeOptionValueRepository = $eavAttributeOptionValueRepository;
+    }
+
+    /**
+     * Return's the repository to access EAV attribute option values.
+     *
+     * @return \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository The repository instance
+     */
+    public function getEavAttributeOptionValueRepository()
+    {
+        return $this->eavAttributeOptionValueRepository;
+    }
+
+    /**
      * Set's the action with the product relation CRUD methods.
      *
      * @param \TechDivision\Import\Product\Variant\Actions\ProductRelationAction $productRelationAction The action with the product relation CRUD methods
@@ -219,6 +277,32 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     public function getProductSuperLinkAction()
     {
         return $this->productSuperLinkAction;
+    }
+
+    /**
+     * Return's the attribute option value with the passed value and store ID.
+     *
+     * @param mixed   $value   The option value
+     * @param integer $storeId The ID of the store
+     *
+     * @return array|boolean The attribute option value instance
+     */
+    public function getEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId)
+    {
+        return $this->getEavAttributeOptionValueRepository()->findEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId);
+    }
+
+    /**
+     * Return's the first EAV attribute for the passed option value and store ID.
+     *
+     * @param string $optionValue The option value of the EAV attributes
+     * @param string $storeId     The store ID of the EAV attribues
+     *
+     * @return array The array with the EAV attribute
+     */
+    public function getEavAttributeByOptionValueAndStoreId($optionValue, $storeId)
+    {
+        return $this->getEavAttributeRepository()->findOneByOptionValueAndStoreId($optionValue, $storeId);
     }
 
     /**
