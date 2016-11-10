@@ -123,7 +123,7 @@ class VariantSubject extends AbstractSubject
     {
 
         // load the registry processor
-        $registryProcessor = $this->getRegistryProcessor();
+        // $registryProcessor = $this->getRegistryProcessor();
 
         // update the status of the actual import process
         // $registryProcessor->mergeAttributesRecursive($this->serial, array('variations' => array($this->getUid() => array('status' => 1))));

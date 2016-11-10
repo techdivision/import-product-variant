@@ -21,6 +21,7 @@
 namespace TechDivision\Import\Product\Variant\Actions\Processors\Batch;
 
 use TechDivision\Import\Product\Variant\Utils\SqlStatements;
+use TechDivision\Import\Actions\Processors\Batch\AbstractPersistBatchProcessor;
 
 /**
  * The product super attribute persist batch processor implementation.
