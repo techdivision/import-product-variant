@@ -52,4 +52,17 @@ class ProductSuperAttributePersistBatchProcessor extends AbstractPersistBatchPro
     {
         return SqlStatements::CREATE_PRODUCT_SUPER_ATTRIBUTE;
     }
+
+    /**
+     * Persist's the passed row.
+     *
+     * @param array $row The row to persist
+     *
+     * @return string The last inserted ID
+     */
+    public function execute($row)
+    {
+        $this->addToStack($row);
+        return (string) $this->getStackSize();
+    }
 }
