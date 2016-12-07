@@ -20,8 +20,8 @@
 
 namespace TechDivision\Import\Product\Variant\Services;
 
-use TechDivision\Import\ConfigurationInterface;
-use TechDivision\Import\Services\AbstractProcessorFactory;
+use TechDivision\Import\Configuration\SubjectInterface;
+use TechDivision\Import\Product\Services\AbstractProductProcessorFactory;
 use TechDivision\Import\Repositories\EavAttributeRepository;
 use TechDivision\Import\Repositories\EavAttributeOptionValueRepository;
 use TechDivision\Import\Product\Variant\Actions\ProductRelationAction;
@@ -42,7 +42,7 @@ use TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperLinkPersi
  * @link      https://github.com/wagnert/csv-import
  * @link      http://www.appserver.io
  */
-class ProductVariantProcessorFactory extends AbstractProcessorFactory
+class ProductVariantProcessorFactory extends AbstractProductProcessorFactory
 {
 
     /**
@@ -58,36 +58,32 @@ class ProductVariantProcessorFactory extends AbstractProcessorFactory
     /**
      * Factory method to create a new product variant processor instance.
      *
-     * @param \PDO                                       $connection    The PDO connection to use
-     * @param TechDivision\Import\ConfigurationInterface $configuration The subject configuration
+     * @param \PDO                                               $connection    The PDO connection to use
+     * @param TechDivision\Import\Configuration\SubjectInterface $configuration The subject configuration
      *
      * @return \TechDivision\Import\Product\Variant\Services\ProductVariantProcessor The processor instance
      */
-    public function factory(\PDO $connection, ConfigurationInterface $configuration)
+    public static function factory(\PDO $connection, SubjectInterface $configuration)
     {
 
-        // extract Magento edition/version
-        $magentoEdition = $configuration->getMagentoEdition();
-        $magentoVersion = $configuration->getMagentoVersion();
+        // load the utility class name
+        $utilityClassName = $configuration->getUtilityClassName();
 
         // initialize the repository that provides EAV attribute query functionality
         $eavAttributeRepository = new EavAttributeRepository();
-        $eavAttributeRepository->setMagentoEdition($magentoEdition);
-        $eavAttributeRepository->setMagentoVersion($magentoVersion);
+        $eavAttributeRepository->setUtilityClassName($utilityClassName);
         $eavAttributeRepository->setConnection($connection);
         $eavAttributeRepository->init();
 
         // initialize the repository that provides EAV attribute option value query functionality
         $eavAttributeOptionValueRepository = new EavAttributeOptionValueRepository();
-        $eavAttributeOptionValueRepository->setMagentoEdition($magentoEdition);
-        $eavAttributeOptionValueRepository->setMagentoVersion($magentoVersion);
+        $eavAttributeOptionValueRepository->setUtilityClassName($utilityClassName);
         $eavAttributeOptionValueRepository->setConnection($connection);
         $eavAttributeOptionValueRepository->init();
 
         // initialize the action that provides product relation CRUD functionality
         $productRelationPersistProcessor = new ProductRelationPersistProcessor();
-        $productRelationPersistProcessor->setMagentoEdition($magentoEdition);
-        $productRelationPersistProcessor->setMagentoVersion($magentoVersion);
+        $productRelationPersistProcessor->setUtilityClassName($utilityClassName);
         $productRelationPersistProcessor->setConnection($connection);
         $productRelationPersistProcessor->init();
         $productRelationAction = new ProductRelationAction();
@@ -95,8 +91,7 @@ class ProductVariantProcessorFactory extends AbstractProcessorFactory
 
         // initialize the action that provides product super attribute CRUD functionality
         $productSuperAttributePersistProcessor = new ProductSuperAttributePersistProcessor();
-        $productSuperAttributePersistProcessor->setMagentoEdition($magentoEdition);
-        $productSuperAttributePersistProcessor->setMagentoVersion($magentoVersion);
+        $productSuperAttributePersistProcessor->setUtilityClassName($utilityClassName);
         $productSuperAttributePersistProcessor->setConnection($connection);
         $productSuperAttributePersistProcessor->init();
         $productSuperAttributeAction = new ProductSuperAttributeAction();
@@ -104,8 +99,7 @@ class ProductVariantProcessorFactory extends AbstractProcessorFactory
 
         // initialize the action that provides product super attribute label CRUD functionality
         $productSuperAttributeLabelPersistProcessor = new ProductSuperAttributeLabelPersistProcessor();
-        $productSuperAttributeLabelPersistProcessor->setMagentoEdition($magentoEdition);
-        $productSuperAttributeLabelPersistProcessor->setMagentoVersion($magentoVersion);
+        $productSuperAttributeLabelPersistProcessor->setUtilityClassName($utilityClassName);
         $productSuperAttributeLabelPersistProcessor->setConnection($connection);
         $productSuperAttributeLabelPersistProcessor->init();
         $productSuperAttributeLabelAction = new ProductSuperAttributeLabelAction();
@@ -113,8 +107,7 @@ class ProductVariantProcessorFactory extends AbstractProcessorFactory
 
         // initialize the action that provides product super link CRUD functionality
         $productSuperLinkPersistProcessor = new ProductSuperLinkPersistProcessor();
-        $productSuperLinkPersistProcessor->setMagentoEdition($magentoEdition);
-        $productSuperLinkPersistProcessor->setMagentoVersion($magentoVersion);
+        $productSuperLinkPersistProcessor->setUtilityClassName($utilityClassName);
         $productSuperLinkPersistProcessor->setConnection($connection);
         $productSuperLinkPersistProcessor->init();
         $productSuperLinkAction = new ProductSuperLinkAction();

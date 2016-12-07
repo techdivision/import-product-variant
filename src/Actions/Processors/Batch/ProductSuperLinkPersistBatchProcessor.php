@@ -50,6 +50,7 @@ class ProductSuperLinkPersistBatchProcessor extends AbstractPersistBatchProcesso
      */
     protected function getStatement()
     {
-        return SqlStatements::CREATE_PRODUCT_SUPER_LINK;
+        $utilityClassName = $this->getUtilityClassName();
+        return $utilityClassName::CREATE_PRODUCT_SUPER_LINK;
     }
 }

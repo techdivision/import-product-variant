@@ -50,7 +50,8 @@ class ProductSuperAttributePersistBatchProcessor extends AbstractPersistBatchPro
      */
     protected function getStatement()
     {
-        return SqlStatements::CREATE_PRODUCT_SUPER_ATTRIBUTE;
+        $utilityClassName = $this->getUtilityClassName();
+        return $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE;
     }
 
     /**
