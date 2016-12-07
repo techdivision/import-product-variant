@@ -21,6 +21,7 @@
 namespace TechDivision\Import\Product\Variant\Services;
 
 use TechDivision\Import\ConfigurationInterface;
+use TechDivision\Import\Services\AbstractProcessorFactory;
 use TechDivision\Import\Repositories\EavAttributeRepository;
 use TechDivision\Import\Repositories\EavAttributeOptionValueRepository;
 use TechDivision\Import\Product\Variant\Actions\ProductRelationAction;
@@ -41,8 +42,18 @@ use TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperLinkPersi
  * @link      https://github.com/wagnert/csv-import
  * @link      http://www.appserver.io
  */
-class ProductVariantProcessorFactory
+class ProductVariantProcessorFactory extends AbstractProcessorFactory
 {
+
+    /**
+     * Return's the processor class name.
+     *
+     * @return string The processor class name
+     */
+    protected static function getProcessorType()
+    {
+        return 'TechDivision\Import\Product\Variant\Services\ProductVariantProcessor';
+    }
 
     /**
      * Factory method to create a new product variant processor instance.
@@ -110,7 +121,8 @@ class ProductVariantProcessorFactory
         $productSuperLinkAction->setPersistProcessor($productSuperLinkPersistProcessor);
 
         // initialize the product variant processor
-        $productVariantProcessor = new ProductVariantProcessor();
+        $processorType = ProductVariantProcessorFactory::getProcessorType();
+        $productVariantProcessor = new $processorType();
         $productVariantProcessor->setConnection($connection);
         $productVariantProcessor->setEavAttributeOptionValueRepository($eavAttributeOptionValueRepository);
         $productVariantProcessor->setEavAttributeRepository($eavAttributeRepository);
