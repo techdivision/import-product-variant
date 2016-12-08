@@ -102,31 +102,16 @@ class VariantSubject extends AbstractSubject
         $status = $registryProcessor->getAttribute($this->serial);
 
         // load the EAV attributes we've prepared initially
-        $this->eavAttributes = $status['globalData'][RegistryKeys::EAV_ATTRIBUTES];
+        $this->eavAttributes = $status[RegistryKeys::GLOBAL_DATA][RegistryKeys::EAV_ATTRIBUTES];
 
         // load the stores we've initialized before
-        $this->stores = $status['globalData'][RegistryKeys::STORES];
+        $this->stores = $status[RegistryKeys::GLOBAL_DATA][RegistryKeys::STORES];
 
         // load the attribute set we've prepared intially
-        $this->skuEntityIdMapping = $status['skuEntityIdMapping'];
+        $this->skuEntityIdMapping = $status[RegistryKeys::SKU_ENTITY_ID_MAPPING];
 
         // prepare the callbacks
         parent::setUp();
-    }
-
-    /**
-     * Clean up the global data after importing the variants.
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-
-        // load the registry processor
-        // $registryProcessor = $this->getRegistryProcessor();
-
-        // update the status of the actual import process
-        // $registryProcessor->mergeAttributesRecursive($this->serial, array('variations' => array($this->getUid() => array('status' => 1))));
     }
 
     /**
