@@ -101,5 +101,4 @@ class SqlStatements extends FallbackStatements
                                                              value
                                                          )
                                                   VALUES (?, ?, ?, ?)';
-
 }

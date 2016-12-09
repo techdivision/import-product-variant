@@ -308,7 +308,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Persist's the passed product relation data and return's the ID.
      *
-     * @param array $product The product relation data to persist
+     * @param array $productRelation The product relation data to persist
      *
      * @return void
      */

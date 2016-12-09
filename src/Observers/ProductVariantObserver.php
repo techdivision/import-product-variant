@@ -44,8 +44,12 @@ class ProductVariantObserver extends AbstractProductImportObserver
     const ARTEFACT_TYPE = 'variants';
 
     /**
-     * {@inheritDoc}
-     * @see \Importer\Csv\Actions\Listeners\Row\ListenerInterface::handle()
+     * Will be invoked by the action on the events the listener has been registered for.
+     *
+     * @param array $row The row to handle
+     *
+     * @return array The modified row
+     * @see \TechDivision\Import\Product\Observers\ImportObserverInterface::handle()
      */
     public function handle(array $row)
     {
@@ -55,8 +59,8 @@ class ProductVariantObserver extends AbstractProductImportObserver
 
         // query whether or not, we've configurables
         if (!isset($headers[ColumnKeys::CONFIGURABLE_VARIATIONS]) ||
-            !isset($row[$headers[ColumnKeys::CONFIGURABLE_VARIATIONS]]))
-        {
+            !isset($row[$headers[ColumnKeys::CONFIGURABLE_VARIATIONS]])
+        ) {
             return $row;
         }
 
@@ -92,7 +96,6 @@ class ProductVariantObserver extends AbstractProductImportObserver
 
             // iterate over all variations and import them
             foreach (explode('|', $configurableVariations) as $variation) {
-
                 // sku=Configurable Product 48-option 2,configurable_variation=option 2
                 list ($sku, $option) = explode(',', $variation);
 

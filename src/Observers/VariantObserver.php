@@ -38,8 +38,12 @@ class VariantObserver extends AbstractProductImportObserver
 {
 
     /**
-     * {@inheritDoc}
-     * @see \Importer\Csv\Actions\Listeners\Row\ListenerInterface::handle()
+     * Will be invoked by the action on the events the listener has been registered for.
+     *
+     * @param array $row The row to handle
+     *
+     * @return array The modified row
+     * @see \TechDivision\Import\Product\Observers\ImportObserverInterface::handle()
      */
     public function handle(array $row)
     {
@@ -108,7 +112,7 @@ class VariantObserver extends AbstractProductImportObserver
     /**
      * Map's the passed SKU of the child product to it's PK.
      *
-     * @param string $parentSku The SKU of the child product
+     * @param string $childSku The SKU of the child product
      *
      * @return integer The primary key used to create relations
      */
@@ -133,7 +137,7 @@ class VariantObserver extends AbstractProductImportObserver
     /**
      * Return's TRUE if the passed ID is the parent one.
      *
-     * @param integer $parentID The parent ID to check
+     * @param integer $parentId The parent ID to check
      *
      * @return boolean TRUE if the passed ID is the parent one
      */
