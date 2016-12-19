@@ -308,48 +308,52 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Persist's the passed product relation data and return's the ID.
      *
-     * @param array $productRelation The product relation data to persist
+     * @param array       $productRelation The product relation data to persist
+     * @param string|null $name            The name of the prepared statement that has to be executed
      *
      * @return void
      */
-    public function persistProductRelation($productRelation)
+    public function persistProductRelation($productRelation, $name = null)
     {
-        return $this->getProductRelationAction()->persist($productRelation);
+        return $this->getProductRelationAction()->persist($productRelation, $name);
     }
 
     /**
      * Persist's the passed product super link data and return's the ID.
      *
-     * @param array $productSuperLink The product super link data to persist
+     * @param array       $productSuperLink The product super link data to persist
+     * @param string|null $name             The name of the prepared statement that has to be executed
      *
      * @return void
      */
-    public function persistProductSuperLink($productSuperLink)
+    public function persistProductSuperLink($productSuperLink, $name = null)
     {
-        return $this->getProductSuperLinkAction()->persist($productSuperLink);
+        return $this->getProductSuperLinkAction()->persist($productSuperLink, $name);
     }
 
     /**
      * Persist's the passed product super attribute data and return's the ID.
      *
-     * @param array $productSuperAttribute The product super attribute data to persist
+     * @param array       $productSuperAttribute The product super attribute data to persist
+     * @param string|null $name                  The name of the prepared statement that has to be executed
      *
      * @return string The ID of the persisted product super attribute entity
      */
-    public function persistProductSuperAttribute($productSuperAttribute)
+    public function persistProductSuperAttribute($productSuperAttribute, $name = null)
     {
-        return $this->getProductSuperAttributeAction()->persist($productSuperAttribute);
+        return $this->getProductSuperAttributeAction()->persist($productSuperAttribute, $name);
     }
 
     /**
      * Persist's the passed product super attribute label data and return's the ID.
      *
-     * @param array $productSuperAttributeLabel The product super attribute label data to persist
+     * @param array       $productSuperAttributeLabel The product super attribute label data to persist
+     * @param string|null $name                       The name of the prepared statement that has to be executed
      *
      * @return void
      */
-    public function persistProductSuperAttributeLabel($productSuperAttributeLabel)
+    public function persistProductSuperAttributeLabel($productSuperAttributeLabel, $name = null)
     {
-        return $this->getProductSuperAttributeLabelAction()->persist($productSuperAttributeLabel);
+        return $this->getProductSuperAttributeLabelAction()->persist($productSuperAttributeLabel, $name);
     }
 }
