@@ -51,6 +51,9 @@ class VariantObserver extends AbstractProductImportObserver
         // load the header information
         $headers = $this->getHeaders();
 
+        // prepare the store view code
+        $this->prepareStoreViewCode($row);
+
         // extract the parent/child ID as well as option value and variation label from the row
         $parentSku = $row[$headers[ColumnKeys::VARIANT_PARENT_SKU]];
         $childSku = $row[$headers[ColumnKeys::VARIANT_CHILD_SKU]];
@@ -66,7 +69,7 @@ class VariantObserver extends AbstractProductImportObserver
         $this->persistProductSuperLink(array($childId, $parentId));
 
         // load the store ID
-        $store = $this->getStoreByStoreCode($row[$headers[ColumnKeys::STORE_VIEW_CODE]] ?: StoreViewCodes::ADMIN);
+        $store = $this->getStoreByStoreCode($this->getStoreViewCode(StoreViewCodes::ADMIN));
         $storeId = $store[MemberNames::STORE_ID];
 
         // load the EAV attribute

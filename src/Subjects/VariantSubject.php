@@ -21,7 +21,7 @@
 namespace TechDivision\Import\Product\Variant\Subjects;
 
 use TechDivision\Import\Utils\RegistryKeys;
-use TechDivision\Import\Subjects\AbstractSubject;
+use TechDivision\Import\Product\Subjects\AbstractProductSubject;
 use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface;
 
 /**
@@ -33,15 +33,8 @@ use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterfac
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class VariantSubject extends AbstractSubject
+class VariantSubject extends AbstractProductSubject
 {
-
-    /**
-     * The processor to write the necessary product variant data.
-     *
-     * @var \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface
-     */
-    protected $productProcessor;
 
     /**
      * The ID of the parent product to relate the variant with.
@@ -51,40 +44,11 @@ class VariantSubject extends AbstractSubject
     protected $parentId;
 
     /**
-     * The available stores.
-     *
-     * @var array
-     */
-    protected $stores = array();
-
-    /**
      * The mapping for the SKUs to the created entity IDs.
      *
      * @var array
      */
     protected $skuEntityIdMapping = array();
-
-    /**
-     * Set's the product variant processor instance.
-     *
-     * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productProcessor The product variant processor instance
-     *
-     * @return void
-     */
-    public function setProductProcessor(ProductVariantProcessorInterface $productProcessor)
-    {
-        $this->productProcessor = $productProcessor;
-    }
-
-    /**
-     * Return's the product variant processor instance.
-     *
-     * @return \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface The product variant processor instance
-     */
-    public function getProductProcessor()
-    {
-        return $this->productProcessor;
-    }
 
     /**
      * Intializes the previously loaded global data for exactly one variants.
@@ -95,23 +59,17 @@ class VariantSubject extends AbstractSubject
     public function setUp()
     {
 
+        // invoke parent method
+        parent::setUp();
+
         // load the entity manager and the registry processor
         $registryProcessor = $this->getRegistryProcessor();
 
         // load the status of the actual import process
-        $status = $registryProcessor->getAttribute($this->serial);
-
-        // load the EAV attributes we've prepared initially
-        $this->eavAttributes = $status[RegistryKeys::GLOBAL_DATA][RegistryKeys::EAV_ATTRIBUTES];
-
-        // load the stores we've initialized before
-        $this->stores = $status[RegistryKeys::GLOBAL_DATA][RegistryKeys::STORES];
+        $status = $registryProcessor->getAttribute($this->getSerial());
 
         // load the attribute set we've prepared intially
         $this->skuEntityIdMapping = $status[RegistryKeys::SKU_ENTITY_ID_MAPPING];
-
-        // prepare the callbacks
-        parent::setUp();
     }
 
     /**
@@ -134,16 +92,6 @@ class VariantSubject extends AbstractSubject
     public function getParentId()
     {
         return $this->parentId;
-    }
-
-    /**
-     * Return's an array with the available stores.
-     *
-     * @return array The available stores
-     */
-    public function getStores()
-    {
-        return $this->stores;
     }
 
     /**
