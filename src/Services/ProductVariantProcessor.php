@@ -315,7 +315,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductRelation($productRelation, $name = null)
     {
-        return $this->getProductRelationAction()->persist($productRelation, $name);
+        return $this->getProductRelationAction()->create($productRelation, $name);
     }
 
     /**
@@ -328,7 +328,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductSuperLink($productSuperLink, $name = null)
     {
-        return $this->getProductSuperLinkAction()->persist($productSuperLink, $name);
+        return $this->getProductSuperLinkAction()->create($productSuperLink, $name);
     }
 
     /**
@@ -341,7 +341,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductSuperAttribute($productSuperAttribute, $name = null)
     {
-        return $this->getProductSuperAttributeAction()->persist($productSuperAttribute, $name);
+        return $this->getProductSuperAttributeAction()->create($productSuperAttribute, $name);
     }
 
     /**
@@ -354,6 +354,6 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductSuperAttributeLabel($productSuperAttributeLabel, $name = null)
     {
-        return $this->getProductSuperAttributeLabelAction()->persist($productSuperAttributeLabel, $name);
+        return $this->getProductSuperAttributeLabelAction()->create($productSuperAttributeLabel, $name);
     }
 }
