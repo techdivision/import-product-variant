@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributePersistProcessor
+ * TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeLabelCreateProcessor
  *
  * NOTICE OF LICENSE
  *
@@ -20,10 +20,10 @@
 
 namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
-use TechDivision\Import\Actions\Processors\AbstractPersistProcessor;
+use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
 
 /**
- * The product super attribute persist processor implementation.
+ * The product super attribute label create processor implementation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -31,7 +31,7 @@ use TechDivision\Import\Actions\Processors\AbstractPersistProcessor;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperAttributePersistProcessor extends AbstractPersistProcessor
+class ProductSuperAttributeLabelCreateProcessor extends AbstractCreateProcessor
 {
 
     /**
@@ -48,21 +48,7 @@ class ProductSuperAttributePersistProcessor extends AbstractPersistProcessor
 
         // return the array with the SQL statements that has to be prepared
         return array(
-            $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE => $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE
+            $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL => $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL
         );
-    }
-
-    /**
-     * Persist's the passed row.
-     *
-     * @param array       $row  The row to persist
-     * @param string|null $name The name of the prepared statement that has to be executed
-     *
-     * @return string The last inserted ID
-     */
-    public function execute($row, $name = null)
-    {
-        $this->getPreparedStatement($name)->execute($row);
-        return $this->getConnection()->lastInsertId();
     }
 }

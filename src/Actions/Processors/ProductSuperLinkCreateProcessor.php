@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeLabelPersistProcessor
+ * TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperLinkCreateProcessor
  *
  * NOTICE OF LICENSE
  *
@@ -20,10 +20,10 @@
 
 namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
-use TechDivision\Import\Actions\Processors\AbstractPersistProcessor;
+use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
 
 /**
- * The product super attribute label persist processor implementation.
+ * The product super link create processor implementation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -31,7 +31,7 @@ use TechDivision\Import\Actions\Processors\AbstractPersistProcessor;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperAttributeLabelPersistProcessor extends AbstractPersistProcessor
+class ProductSuperLinkCreateProcessor extends AbstractCreateProcessor
 {
 
     /**
@@ -48,7 +48,7 @@ class ProductSuperAttributeLabelPersistProcessor extends AbstractPersistProcesso
 
         // return the array with the SQL statements that has to be prepared
         return array(
-            $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL => $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL
+            $utilityClassName::CREATE_PRODUCT_SUPER_LINK => $utilityClassName::CREATE_PRODUCT_SUPER_LINK
         );
     }
 }
