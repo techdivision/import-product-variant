@@ -20,13 +20,12 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
-use TechDivision\Import\Utils\StoreViewCodes;
-use TechDivision\Import\Product\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
+use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
 
 /**
- * A SLSB that handles the process to import product bunches.
+ * Oberserver that provides functionality for the product variant replace operation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -36,6 +35,20 @@ use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
  */
 class VariantObserver extends AbstractProductImportObserver
 {
+
+    /**
+     * The product relation's parent ID.
+     *
+     * @var integer
+     */
+    protected $parentId;
+
+    /**
+     * The product relation's child ID.
+     *
+     * @var integer
+     */
+    protected $childId;
 
     /**
      * Will be invoked by the action on the events the listener has been registered for.
@@ -48,56 +61,95 @@ class VariantObserver extends AbstractProductImportObserver
     public function handle(array $row)
     {
 
-        // load the header information
-        $headers = $this->getHeaders();
+        // initialize the row
+        $this->setRow($row);
 
-        // prepare the store view code
-        $this->prepareStoreViewCode($row);
+        // process the functionality and return the row
+        $this->process();
 
-        // extract the parent/child ID as well as option value and variation label from the row
-        $parentSku = $row[$headers[ColumnKeys::VARIANT_PARENT_SKU]];
-        $childSku = $row[$headers[ColumnKeys::VARIANT_CHILD_SKU]];
-        $optionValue = $row[$headers[ColumnKeys::VARIANT_OPTION_VALUE]];
-        $variationLabel = $row[$headers[ColumnKeys::VARIANT_VARIATION_LABEL]];
+        // return the processed row
+        return $this->getRow();
+    }
 
-        // load parent/child IDs
-        $parentId = $this->mapParentSku($parentSku);
-        $childId = $this->mapChildSku($childSku);
+    /**
+     * Process the observer's business logic.
+     *
+     * @return array The processed row
+     */
+    protected function process()
+    {
 
-        // create the product relation
-        $this->persistProductRelation(array($parentId, $childId));
-        $this->persistProductSuperLink(array($childId, $parentId));
+        // load and map the parent + child ID
+        $this->parentId = $this->mapParentSku($this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
+        $this->childId = $this->mapChildSku($this->getValue(ColumnKeys::VARIANT_CHILD_SKU));
 
-        // load the store ID
-        $store = $this->getStoreByStoreCode($this->getStoreViewCode(StoreViewCodes::ADMIN));
-        $storeId = $store[MemberNames::STORE_ID];
-
-        // load the EAV attribute
-        $eavAttribute = $this->getEavAttributeByOptionValueAndStoreId($optionValue, $storeId);
-
-        // query whether or not, the parent ID have changed
-        if (!$this->isParentId($parentId)) {
-            // preserve the parent ID
-            $this->setParentId($parentId);
-
-            // load the attribute ID
-            $attributeId = $eavAttribute[MemberNames::ATTRIBUTE_ID];
-            // if yes, create the super attribute load the ID of the new super attribute
-            $productSuperAttributeId = $this->persistProductSuperAttribute(array($parentId, $attributeId, 0));
-
-            // query whether or not we've to create super attribute labels
-            if (empty($variationLabel)) {
-                $variationLabel = $eavAttribute[MemberNames::FRONTENT_LABEL];
-            }
-
-            // prepare the super attribute label
-            $params = array($productSuperAttributeId, $storeId, 0, $variationLabel);
-            // save the super attribute label
-            $this->persistProductSuperAttributeLabel($params);
+        // prepare and persist the product relation
+        if ($productRelation = $this->initializeProductRelation($this->prepareProductRelationAttributes())) {
+            $this->persistProductRelation($productRelation);
         }
 
-        // returns the row
-        return $row;
+        // prepare and persist the product super link
+        if ($productSuperLink = $this->initializeProductSuperLink($this->prepareProductSuperLinkAttributes())) {
+            $this->persistProductSuperLink($productSuperLink);
+        }
+    }
+
+    /**
+     * Prepare the product relation attributes that has to be persisted.
+     *
+     * @return array The prepared product relation attributes
+     */
+    protected function prepareProductRelationAttributes()
+    {
+
+        // initialize and return the entity
+        return $this->initializeEntity(
+            array(
+                MemberNames::PARENT_ID => $this->parentId,
+                MemberNames::CHILD_ID  => $this->childId
+            )
+        );
+    }
+
+    /**
+     * Prepare the product super link attributes that has to be persisted.
+     *
+     * @return array The prepared product super link attributes
+     */
+    protected function prepareProductSuperLinkAttributes()
+    {
+
+        // initialize and return the entity
+        return $this->initializeEntity(
+            array(
+                MemberNames::PRODUCT_ID => $this->childId,
+                MemberNames::PARENT_ID  => $this->parentId
+            )
+        );
+    }
+
+    /**
+     * Initialize the product relation with the passed attributes and returns an instance.
+     *
+     * @param array $attr The product relation attributes
+     *
+     * @return array|null The initialized product relation, or null if the relation already exsist
+     */
+    protected function initializeProductRelation(array $attr)
+    {
+        return $attr;
+    }
+
+    /**
+     * Initialize the product super link with the passed attributes and returns an instance.
+     *
+     * @param array $attr The product super link attributes
+     *
+     * @return array|null The initialized product super link, or null if the super link already exsist
+     */
+    protected function initializeProductSuperLink(array $attr)
+    {
+        return $attr;
     }
 
     /**
@@ -107,7 +159,7 @@ class VariantObserver extends AbstractProductImportObserver
      *
      * @return integer The primary key used to create relations
      */
-    public function mapParentSku($parentSku)
+    protected function mapParentSku($parentSku)
     {
         return $this->mapSkuToEntityId($parentSku);
     }
@@ -119,7 +171,7 @@ class VariantObserver extends AbstractProductImportObserver
      *
      * @return integer The primary key used to create relations
      */
-    public function mapChildSku($childSku)
+    protected function mapChildSku($childSku)
     {
         return $this->mapSkuToEntityId($childSku);
     }
@@ -132,79 +184,9 @@ class VariantObserver extends AbstractProductImportObserver
      * @return integer The mapped entity ID
      * @throws \Exception Is thrown if the SKU is not mapped yet
      */
-    public function mapSkuToEntityId($sku)
+    protected function mapSkuToEntityId($sku)
     {
         return $this->getSubject()->mapSkuToEntityId($sku);
-    }
-
-    /**
-     * Return's TRUE if the passed ID is the parent one.
-     *
-     * @param integer $parentId The parent ID to check
-     *
-     * @return boolean TRUE if the passed ID is the parent one
-     */
-    public function isParentId($parentId)
-    {
-        return $this->getParentId() === $parentId;
-    }
-
-    /**
-     * Set's the ID of the parent product to relate the variant with.
-     *
-     * @param integer $parentId The ID of the parent product
-     *
-     * @return void
-     */
-    public function setParentId($parentId)
-    {
-        $this->getSubject()->setParentId($parentId);
-    }
-
-    /**
-     * Return's the ID of the parent product to relate the variant with.
-     *
-     * @return integer The ID of the parent product
-     */
-    public function getParentId()
-    {
-        return $this->getSubject()->getParentId();
-    }
-
-    /**
-     * Return's the store for the passed store code.
-     *
-     * @param string $storeCode The store code to return the store for
-     *
-     * @return array The requested store
-     * @throws \Exception Is thrown, if the requested store is not available
-     */
-    public function getStoreByStoreCode($storeCode)
-    {
-        return $this->getSubject()->getStoreByStoreCode($storeCode);
-    }
-
-    /**
-     * Return's an array with the available stores.
-     *
-     * @return array The available stores
-     */
-    public function getStores()
-    {
-        return $this->getSubject()->getStores();
-    }
-
-    /**
-     * Return's the first EAV attribute for the passed option value and store ID.
-     *
-     * @param string $optionValue The option value of the EAV attributes
-     * @param string $storeId     The store ID of the EAV attribues
-     *
-     * @return array The array with the EAV attribute
-     */
-    public function getEavAttributeByOptionValueAndStoreId($optionValue, $storeId)
-    {
-        return $this->getSubject()->getEavAttributeByOptionValueAndStoreId($optionValue, $storeId);
     }
 
     /**
@@ -214,7 +196,7 @@ class VariantObserver extends AbstractProductImportObserver
      *
      * @return void
      */
-    public function persistProductRelation($productRelation)
+    protected function persistProductRelation($productRelation)
     {
         return $this->getSubject()->persistProductRelation($productRelation);
     }
@@ -226,32 +208,8 @@ class VariantObserver extends AbstractProductImportObserver
      *
      * @return void
      */
-    public function persistProductSuperLink($productSuperLink)
+    protected function persistProductSuperLink($productSuperLink)
     {
         return $this->getSubject()->persistProductSuperLink($productSuperLink);
-    }
-
-    /**
-     * Persist's the passed product super attribute data and return's the ID.
-     *
-     * @param array $productSuperAttribute The product super attribute data to persist
-     *
-     * @return void
-     */
-    public function persistProductSuperAttribute($productSuperAttribute)
-    {
-        return $this->getSubject()->persistProductSuperAttribute($productSuperAttribute);
-    }
-
-    /**
-     * Persist's the passed product super attribute label data and return's the ID.
-     *
-     * @param array $productSuperAttributeLabel The product super attribute label data to persist
-     *
-     * @return void
-     */
-    public function persistProductSuperAttributeLabel($productSuperAttributeLabel)
-    {
-        return $this->getSubject()->persistProductSuperAttributeLabel($productSuperAttributeLabel);
     }
 }

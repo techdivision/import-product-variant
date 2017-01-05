@@ -20,10 +20,11 @@
 
 namespace TechDivision\Import\Product\Variant\Actions;
 
+use TechDivision\Import\Utils\EntityStatus;
 use TechDivision\Import\Actions\AbstractAction;
 
 /**
- * A SLSB providing repository functionality for product super attribute CRUD actions.
+ * An action implementation that provides CRUD functionality for product super attributes.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -33,6 +34,24 @@ use TechDivision\Import\Actions\AbstractAction;
  */
 class ProductSuperAttributeAction extends AbstractAction
 {
+
+    /**
+     * Helper method that create/update the passed entity, depending on
+     * the entity's status.
+     *
+     * @param array $row The entity data to create/update
+     *
+     * @return string The last inserted ID
+     */
+    public function persist(array $row)
+    {
+
+        // load the method name
+        $methodName = $row[EntityStatus::MEMBER_NAME];
+
+        // invoke the method
+        return $this->$methodName($row);
+    }
 
     /**
      * Creates's the entity with the passed attributes.
@@ -45,5 +64,18 @@ class ProductSuperAttributeAction extends AbstractAction
     public function create($row, $name = null)
     {
         return $this->getCreateProcessor()->execute($row, $name);
+    }
+
+    /**
+     * Update's the entity with the passed attributes.
+     *
+     * @param array       $row  The attributes of the entity to update
+     * @param string|null $name The name of the prepared statement that has to be executed
+     *
+     * @return string The ID of the updated product super attribute
+     */
+    public function update($row, $name = null)
+    {
+        return $this->getUpdateProcessor()->execute($row, $name);
     }
 }

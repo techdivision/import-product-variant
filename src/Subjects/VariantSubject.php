@@ -22,7 +22,6 @@ namespace TechDivision\Import\Product\Variant\Subjects;
 
 use TechDivision\Import\Utils\RegistryKeys;
 use TechDivision\Import\Product\Subjects\AbstractProductSubject;
-use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface;
 
 /**
  * A SLSB that handles the process to import product variants.
@@ -145,6 +144,58 @@ class VariantSubject extends AbstractProductSubject
     public function getEavAttributeByOptionValueAndStoreId($optionValue, $storeId)
     {
         return $this->getProductProcessor()->getEavAttributeByOptionValueAndStoreId($optionValue, $storeId);
+    }
+
+    /**
+     * Load's the product relation with the passed parent/child ID.
+     *
+     * @param integer $parentId The entity ID of the product relation's parent product
+     * @param integer $childId  The entity ID of the product relation's child product
+     *
+     * @return array The product relation
+     */
+    public function loadProductRelation($parentId, $childId)
+    {
+        return $this->getProductProcessor()->loadProductRelation($parentId, $childId);
+    }
+
+    /**
+     * Load's the product super link with the passed product/parent ID.
+     *
+     * @param integer $productId The entity ID of the product super link's product
+     * @param integer $parentId  The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function loadProductSuperLink($productId, $parentId)
+    {
+        return $this->getProductProcessor()->loadProductSuperLink($productId, $parentId);
+    }
+
+    /**
+     * Load's the product super attribute with the passed product/attribute ID.
+     *
+     * @param integer $productId   The entity ID of the product super attribute's product
+     * @param integer $attributeId The attribute ID of the product super attributes attribute
+     *
+     * @return array The product super attribute
+     */
+    public function loadProductSuperAttribute($productId, $attributeId)
+    {
+        return $this->getProductProcessor()->loadProductSuperAttribute($productId, $attributeId);
+    }
+
+    /**
+     * Load's the product super attribute label with the passed product super attribute/store ID.
+     *
+     * @param integer $productSuperAttributeId The product super attribute ID of the product super attribute label
+     * @param integer $storeId                 The store ID of the product super attribute label
+     *
+     * @return array The product super attribute label
+     */
+    public function loadProductSuperAttributeLabel($productSuperAttributeId, $storeId)
+    {
+        return $this->getProductProcessor()->loadProductSuperAttributeLabel($productSuperAttributeId, $storeId);
     }
 
     /**

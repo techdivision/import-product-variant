@@ -54,36 +54,39 @@ class ProductVariantObserver extends AbstractProductImportObserver
     public function handle(array $row)
     {
 
-        // load the header information
-        $headers = $this->getHeaders();
+        // initialize the row
+        $this->setRow($row);
 
-        // query whether or not, we've configurables
-        if (!isset($headers[ColumnKeys::CONFIGURABLE_VARIATIONS]) ||
-            !isset($row[$headers[ColumnKeys::CONFIGURABLE_VARIATIONS]])
-        ) {
-            return $row;
-        }
+        // process the functionality and return the row
+        $this->process();
+
+        // return the processed row
+        return $this->getRow();
+    }
+
+    /**
+     * Process the observer's business logic.
+     *
+     * @return array The processed row
+     */
+    protected function process()
+    {
 
         // query whether or not we've found a configurable product
-        if ($row[$headers[ColumnKeys::PRODUCT_TYPE]] !== ProductTypes::CONFIGURABLE) {
-            return $row;
-        }
-
-        // query whether or not, we've a configurable configuration
-        if (!isset($row[$headers[ColumnKeys::CONFIGURABLE_VARIATIONS]])) {
-            return $row;
+        if ($this->getValue(ColumnKeys::PRODUCT_TYPE) !== ProductTypes::CONFIGURABLE) {
+            return;
         }
 
         // query whether or not, we've configurables
-        if ($configurableVariations = $row[$headers[ColumnKeys::CONFIGURABLE_VARIATIONS]]) {
+        if ($configurableVariations = $this->getValue(ColumnKeys::CONFIGURABLE_VARIATIONS)) {
             // load the variation labels, if available
-            $configurableVariationLabels = $row[$headers[ColumnKeys::CONFIGURABLE_VARIATION_LABELS]];
+            $configurableVariationLabels = $this->getValue(ColumnKeys::CONFIGURABLE_VARIATION_LABELS);
 
             // create an array with the variation labels (attribute code as key)
             $varLabels = array();
-            foreach (explode('|', $configurableVariationLabels) as $variationLabel) {
+            foreach ($this->explode($configurableVariationLabels, '|') as $variationLabel) {
                 if (strstr($variationLabel, '=')) {
-                    list ($key, $value) = explode('=', $variationLabel);
+                    list ($key, $value) = $this->explode($variationLabel, '=');
                     $varLabels[$key] = $value;
                 }
             }
@@ -92,16 +95,19 @@ class ProductVariantObserver extends AbstractProductImportObserver
             $artefacts = array();
 
             // load the parent SKU from the row
-            $parentSku = $row[$headers[ColumnKeys::SKU]];
+            $parentSku = $this->getValue(ColumnKeys::SKU);
+
+            // load the store view code
+            $storeViewCode = $this->getValue(ColumnKeys::STORE_VIEW_CODE);
 
             // iterate over all variations and import them
-            foreach (explode('|', $configurableVariations) as $variation) {
+            foreach ($this->explode($configurableVariations, '|') as $variation) {
                 // sku=Configurable Product 48-option 2,configurable_variation=option 2
-                list ($sku, $option) = explode(',', $variation);
+                list ($sku, $option) = $this->explode($variation);
 
                 // explode the variations child ID as well as option code and value
-                list (, $childSku) = explode('=', $sku);
-                list ($optionCode, $optionValue) = explode('=', $option);
+                list (, $childSku) = $this->explode($sku, '=');
+                list ($optionCode, $optionValue) = $this->explode($option, '=');
 
                 // load the apropriate variation label
                 $varLabel = '';
@@ -111,7 +117,7 @@ class ProductVariantObserver extends AbstractProductImportObserver
 
                 // append the product variation
                 $artefacts[] = array(
-                    ColumnKeys::STORE_VIEW_CODE         => $row[$headers[ColumnKeys::STORE_VIEW_CODE]],
+                    ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
                     ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
                     ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
                     ColumnKeys::VARIANT_OPTION_VALUE    => $optionValue,
@@ -122,9 +128,6 @@ class ProductVariantObserver extends AbstractProductImportObserver
             // append the variations to the subject
             $this->addArtefacts($artefacts);
         }
-
-        // returns the row
-        return $row;
     }
 
     /**
@@ -136,7 +139,7 @@ class ProductVariantObserver extends AbstractProductImportObserver
      * @return void
      * @uses \TechDivision\Import\Product\Variant\Subjects\BunchSubject::getLastEntityId()
      */
-    public function addArtefacts(array $artefacts)
+    protected function addArtefacts(array $artefacts)
     {
         $this->getSubject()->addArtefacts(ProductVariantObserver::ARTEFACT_TYPE, $artefacts);
     }
