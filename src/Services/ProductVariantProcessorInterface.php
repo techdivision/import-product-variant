@@ -35,6 +35,41 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
 {
 
     /**
+     * Return's the repository to access EAV attributes.
+     *
+     * @return \TechDivision\Import\Product\Repositories\EavAttributeRepository The repository instance
+     */
+    public function getEavAttributeRepository();
+
+    /**
+     * Return's the repository to access product relations.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductRelationRepository The repository instance
+     */
+    public function getProductRelationRepository();
+
+    /**
+     * Return's the repository to access product super attributes.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository The repository instance
+     */
+    public function getProductSuperAttributeRepository();
+
+    /**
+     * Return's the repository to access product super attribute labels.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributLabeleRepository The repository instance
+     */
+    public function getProductSuperAttributeLabelRepository();
+
+    /**
+     * Return's the repository to access product super links.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository The repository instance
+     */
+    public function getProductSuperLinkRepository();
+
+    /**
      * Return's the action with the product relation CRUD methods.
      *
      * @return \TechDivision\Import\Product\Variant\Actions\ProductRelationAction The action instance
@@ -81,6 +116,46 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
      * @return array The array with the EAV attribute
      */
     public function getEavAttributeByOptionValueAndStoreId($optionValue, $storeId);
+
+    /**
+     * Load's the product relation with the passed parent/child ID.
+     *
+     * @param integer $parentId The entity ID of the product relation's parent product
+     * @param integer $childId  The entity ID of the product relation's child product
+     *
+     * @return array The product relation
+     */
+    public function loadProductRelation($parentId, $childId);
+
+    /**
+     * Load's the product super attribute with the passed product/attribute ID.
+     *
+     * @param integer $productId   The entity ID of the product super attribute's product
+     * @param integer $attributeId The attribute ID of the product super attributes attribute
+     *
+     * @return array The product super attribute
+     */
+    public function loadProductSuperAttribute($productId, $attributeId);
+
+    /**
+     * Load's the product super attribute label with the passed product super attribute/store ID.
+     *
+     * @param integer $productSuperAttributeId The product super attribute ID of the product super attribute label
+     * @param integer $storeId                 The store ID of the product super attribute label
+     *
+     * @return array The product super attribute label
+     */
+    public function loadProductSuperAttributeLabel($productSuperAttributeId, $storeId);
+
+    /**
+     * Load's the product super link with the passed product/parent ID.
+     *
+     * @param integer $productId The entity ID of the product super link's product
+     * @param integer $parentId  The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function loadProductSuperLink($productId, $parentId);
 
     /**
      * Persist's the passed product relation data and return's the ID.

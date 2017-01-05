@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeCreateProcessor
+ * TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeUpdateProcessor
  *
  * NOTICE OF LICENSE
  *
@@ -20,10 +20,11 @@
 
 namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
-use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
+use TechDivision\Import\Product\Variant\Utils\MemberNames;
+use TechDivision\Import\Actions\Processors\AbstractUpdateProcessor;
 
 /**
- * The product super attribute create processor implementation.
+ * The product super attribute update processor implementation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -31,7 +32,7 @@ use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperAttributeCreateProcessor extends AbstractCreateProcessor
+class ProductSuperAttributeUpdateProcessor extends AbstractUpdateProcessor
 {
 
     /**
@@ -48,7 +49,7 @@ class ProductSuperAttributeCreateProcessor extends AbstractCreateProcessor
 
         // return the array with the SQL statements that has to be prepared
         return array(
-            $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE => $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE
+            $utilityClassName::UPDATE_PRODUCT_SUPER_ATTRIBUTE => $utilityClassName::UPDATE_PRODUCT_SUPER_ATTRIBUTE
         );
     }
 
@@ -63,6 +64,6 @@ class ProductSuperAttributeCreateProcessor extends AbstractCreateProcessor
     public function execute($row, $name = null)
     {
         parent::execute($row, $name);
-        return $this->getConnection()->lastInsertId();
+        return $row[MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID];
     }
 }

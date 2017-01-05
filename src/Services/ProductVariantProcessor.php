@@ -47,6 +47,34 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     protected $eavAttributeSetRepository;
 
     /**
+     * The repository to access product relations.
+     *
+     * @var \TechDivision\Import\Product\Repositories\ProductRelationRepository
+     */
+    protected $productRelationRepository;
+
+    /**
+     * The repository to access product relations.
+     *
+     * @var \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository
+     */
+    protected $productSuperLinkRepository;
+
+    /**
+     * The repository to access product super attributes.
+     *
+     * @var \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository
+     */
+    protected $productSuperAttributeRepository;
+
+    /**
+     * The repository to access product super attribute labels.
+     *
+     * @var \TechDivision\Import\Product\Repositories\ProductSuperAttributeLabelRepository
+     */
+    protected $productSuperAttributeLabelRepository;
+
+    /**
      * The repository to access EAV attribute option values.
      *
      * @var \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository
@@ -167,6 +195,94 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     public function getEavAttributeRepository()
     {
         return $this->eavAttributeRepository;
+    }
+
+    /**
+     * Set's the repository to access product relations.
+     *
+     * @param \TechDivision\Import\Product\Repositories\ProductRelationRepository $productRelationRepository The repository instance
+     *
+     * @return void
+     */
+    public function setProductRelationRepository($productRelationRepository)
+    {
+        $this->productRelationRepository = $productRelationRepository;
+    }
+
+    /**
+     * Return's the repository to access product relations.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductRelationRepository The repository instance
+     */
+    public function getProductRelationRepository()
+    {
+        return $this->productRelationRepository;
+    }
+
+    /**
+     * Set's the repository to access product super links.
+     *
+     * @param \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository $productSuperLinkRepository The repository instance
+     *
+     * @return void
+     */
+    public function setProductSuperLinkRepository($productSuperLinkRepository)
+    {
+        $this->productSuperLinkRepository = $productSuperLinkRepository;
+    }
+
+    /**
+     * Return's the repository to access product super links.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository The repository instance
+     */
+    public function getProductSuperLinkRepository()
+    {
+        return $this->productSuperLinkRepository;
+    }
+
+    /**
+     * Set's the repository to access product super attributes.
+     *
+     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository $productSuperAttributeRepository The repository instance
+     *
+     * @return void
+     */
+    public function setProductSuperAttributeRepository($productSuperAttributeRepository)
+    {
+        $this->productSuperAttributeRepository = $productSuperAttributeRepository;
+    }
+
+    /**
+     * Return's the repository to access product super attributes.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository The repository instance
+     */
+    public function getProductSuperAttributeRepository()
+    {
+        return $this->productSuperAttributeRepository;
+    }
+
+    /**
+     * Set's the repository to access product super attribute labels.
+     *
+     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeLabelRepository $productSuperAttributeLabelRepository The repository instance
+     *
+     * @return void
+     */
+    public function setProductSuperAttributeLabelRepository($productSuperAttributeLabelRepository)
+    {
+        $this->productSuperAttributeLabelRepository = $productSuperAttributeLabelRepository;
+    }
+
+    /**
+     * Return's the repository to access product super attribute labels.
+     *
+     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributLabeleRepository The repository instance
+     */
+    public function getProductSuperAttributeLabelRepository()
+    {
+        return $this->productSuperAttributeLabelRepository;
     }
 
     /**
@@ -306,6 +422,58 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     }
 
     /**
+     * Load's the product relation with the passed parent/child ID.
+     *
+     * @param integer $parentId The entity ID of the product relation's parent product
+     * @param integer $childId  The entity ID of the product relation's child product
+     *
+     * @return array The product relation
+     */
+    public function loadProductRelation($parentId, $childId)
+    {
+        return $this->getProductRelationRepository()->findOneByParentIdAndChildId($parentId, $childId);
+    }
+
+    /**
+     * Load's the product super link with the passed product/parent ID.
+     *
+     * @param integer $productId The entity ID of the product super link's product
+     * @param integer $parentId  The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function loadProductSuperLink($productId, $parentId)
+    {
+        return $this->getProductSuperLinkRepository()->findOneByProductIdAndParentId($productId, $parentId);
+    }
+
+    /**
+     * Load's the product super attribute with the passed product/attribute ID.
+     *
+     * @param integer $productId   The entity ID of the product super attribute's product
+     * @param integer $attributeId The attribute ID of the product super attributes attribute
+     *
+     * @return array The product super attribute
+     */
+    public function loadProductSuperAttribute($productId, $attributeId)
+    {
+        return $this->getProductSuperAttributeRepository()->findOneByProductIdAndAttributeId($productId, $attributeId);
+    }
+
+    /**
+     * Load's the product super attribute label with the passed product super attribute/store ID.
+     *
+     * @param integer $productSuperAttributeId The product super attribute ID of the product super attribute label
+     * @param integer $storeId                 The store ID of the product super attribute label
+     *
+     * @return array The product super attribute label
+     */
+    public function loadProductSuperAttributeLabel($productSuperAttributeId, $storeId)
+    {
+        return $this->getProductSuperAttributeLabelRepository()->findOneByProductSuperAttributeIdAndStoreId($productSuperAttributeId, $storeId);
+    }
+
+    /**
      * Persist's the passed product relation data and return's the ID.
      *
      * @param array       $productRelation The product relation data to persist
@@ -315,7 +483,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductRelation($productRelation, $name = null)
     {
-        return $this->getProductRelationAction()->create($productRelation, $name);
+        return $this->getProductRelationAction()->persist($productRelation, $name);
     }
 
     /**
@@ -328,7 +496,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductSuperLink($productSuperLink, $name = null)
     {
-        return $this->getProductSuperLinkAction()->create($productSuperLink, $name);
+        return $this->getProductSuperLinkAction()->persist($productSuperLink, $name);
     }
 
     /**
@@ -341,7 +509,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductSuperAttribute($productSuperAttribute, $name = null)
     {
-        return $this->getProductSuperAttributeAction()->create($productSuperAttribute, $name);
+        return $this->getProductSuperAttributeAction()->persist($productSuperAttribute, $name);
     }
 
     /**
@@ -354,6 +522,6 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      */
     public function persistProductSuperAttributeLabel($productSuperAttributeLabel, $name = null)
     {
-        return $this->getProductSuperAttributeLabelAction()->create($productSuperAttributeLabel, $name);
+        return $this->getProductSuperAttributeLabelAction()->persist($productSuperAttributeLabel, $name);
     }
 }

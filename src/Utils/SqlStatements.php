@@ -20,10 +20,8 @@
 
 namespace TechDivision\Import\Product\Variant\Utils;
 
-use TechDivision\Import\Product\Utils\SqlStatements as FallbackStatements;
-
 /**
- * A SSB providing process registry functionality.
+ * Utility class with the SQL statements to use.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -31,25 +29,48 @@ use TechDivision\Import\Product\Utils\SqlStatements as FallbackStatements;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class SqlStatements extends FallbackStatements
+class SqlStatements extends \TechDivision\Import\Product\Utils\SqlStatements
 {
 
     /**
-     * This is a utility class, so protect it against direct
-     * instantiation.
+     * The SQL statement to load an existing product relation with the passed parent/child ID.
+     *
+     * @var string
      */
-    private function __construct()
-    {
-    }
+    const PRODUCT_RELATION = 'SELECT *
+                                FROM catalog_product_relation
+                               WHERE parent_id = :parent_id
+                                 AND child_id = :child_id';
 
     /**
-     * This is a utility class, so protect it against cloning.
+     * The SQL statement to load an existing product super link with the passed prodcut/parent ID.
      *
-     * @return void
+     * @var string
      */
-    private function __clone()
-    {
-    }
+    const PRODUCT_SUPER_LINK = 'SELECT *
+                                  FROM catalog_product_super_link
+                                 WHERE product_id = :product_id
+                                   AND parent_id = :parent_id';
+
+    /**
+     * The SQL statement to load an existing product super attribute with the passed product/attribute ID.
+     *
+     * @var string
+     */
+    const PRODUCT_SUPER_ATTRIBUTE = 'SELECT *
+                                       FROM catalog_product_super_attribute
+                                      WHERE product_id = :product_id
+                                        AND attribute_id = :attribute_id';
+
+    /**
+     * The SQL statement to load an existing product super attribute label with the passed product super attribute/store ID.
+     *
+     * @var string
+     */
+    const PRODUCT_SUPER_ATTRIBUTE_LABEL = 'SELECT *
+                                             FROM catalog_product_super_attribute_label
+                                            WHERE product_super_attribute_id = :product_super_attribute_id
+                                              AND store_id = :store_id';
 
     /**
      * The SQL statement to create a new product relation.
@@ -61,7 +82,8 @@ class SqlStatements extends FallbackStatements
                                                 parent_id,
                                                 child_id
                                             )
-                                     VALUES (?, ?)';
+                                     VALUES (:parent_id,
+                                             :child_id)';
 
     /**
      * The SQL statement to create a new product super link.
@@ -73,7 +95,8 @@ class SqlStatements extends FallbackStatements
                                                   product_id,
                                                   parent_id
                                               )
-                                       VALUES (?, ?)';
+                                       VALUES (:product_id,
+                                               :parent_id)';
 
     /**
      * The SQL statement to create a new product super attribute.
@@ -86,7 +109,20 @@ class SqlStatements extends FallbackStatements
                                                        attribute_id,
                                                        position
                                                    )
-                                            VALUES (?, ?, ?)';
+                                            VALUES (:product_id,
+                                                    :attribute_id,
+                                                    :position)';
+
+    /**
+     * The SQL statement to update an existing product super attribute.
+     *
+     * @var string
+     */
+    const UPDATE_PRODUCT_SUPER_ATTRIBUTE = 'UPDATE catalog_product_super_attribute
+                                               SET product_id = :product_id,
+                                                   attribute_id = :attribute_id,
+                                                   position = :position
+                                             WHERE product_super_attribute_id = :product_super_attribute_id';
 
     /**
      * The SQL statement to create a new product super attribute label.
@@ -100,5 +136,20 @@ class SqlStatements extends FallbackStatements
                                                              use_default,
                                                              value
                                                          )
-                                                  VALUES (?, ?, ?, ?)';
+                                                  VALUES (:product_super_attribute_id,
+                                                          :store_id,
+                                                          :use_default,
+                                                          :value)';
+
+    /**
+     * The SQL statement to update an existing product super attribute label.
+     *
+     * @var string
+     */
+    const UPDATE_PRODUCT_SUPER_ATTRIBUTE_LABEL = 'UPDATE catalog_product_super_attribute_label
+                                                     SET product_super_attribute_id = :product_super_attribute_id,
+                                                         store_id = :store_id,
+                                                         use_default = :use_default,
+                                                         value = :value
+                                                   WHERE value_id = :value_id';
 }
