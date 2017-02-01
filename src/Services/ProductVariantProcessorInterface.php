@@ -108,16 +108,6 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
     public function getEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId);
 
     /**
-     * Return's the first EAV attribute for the passed option value and store ID.
-     *
-     * @param string $optionValue The option value of the EAV attributes
-     * @param string $storeId     The store ID of the EAV attribues
-     *
-     * @return array The array with the EAV attribute
-     */
-    public function getEavAttributeByOptionValueAndStoreId($optionValue, $storeId);
-
-    /**
      * Load's the product relation with the passed parent/child ID.
      *
      * @param integer $parentId The entity ID of the product relation's parent product

@@ -44,27 +44,6 @@ class ProductVariantObserver extends AbstractProductImportObserver
     const ARTEFACT_TYPE = 'variants';
 
     /**
-     * Will be invoked by the action on the events the listener has been registered for.
-     *
-     * @param array $row The row to handle
-     *
-     * @return array The modified row
-     * @see \TechDivision\Import\Product\Observers\ImportObserverInterface::handle()
-     */
-    public function handle(array $row)
-    {
-
-        // initialize the row
-        $this->setRow($row);
-
-        // process the functionality and return the row
-        $this->process();
-
-        // return the processed row
-        return $this->getRow();
-    }
-
-    /**
      * Process the observer's business logic.
      *
      * @return array The processed row
@@ -120,6 +99,7 @@ class ProductVariantObserver extends AbstractProductImportObserver
                     ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
                     ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
                     ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
+                    ColumnKeys::VARIANT_ATTRIBUTE_CODE  => $optionCode,
                     ColumnKeys::VARIANT_OPTION_VALUE    => $optionValue,
                     ColumnKeys::VARIANT_VARIATION_LABEL => $varLabel
                 );

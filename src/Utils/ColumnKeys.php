@@ -61,6 +61,13 @@ class ColumnKeys extends \TechDivision\Import\Product\Utils\ColumnKeys
     const VARIANT_CHILD_SKU = 'variant_child_sku';
 
     /**
+     * Name for the column 'variant_attribute_code'.
+     *
+     * @var string
+     */
+    const VARIANT_ATTRIBUTE_CODE = 'variant_attribute_code';
+
+    /**
      * Name for the column 'variant_option_value'.
      *
      * @var string
