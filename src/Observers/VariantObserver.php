@@ -51,27 +51,6 @@ class VariantObserver extends AbstractProductImportObserver
     protected $childId;
 
     /**
-     * Will be invoked by the action on the events the listener has been registered for.
-     *
-     * @param array $row The row to handle
-     *
-     * @return array The modified row
-     * @see \TechDivision\Import\Product\Observers\ImportObserverInterface::handle()
-     */
-    public function handle(array $row)
-    {
-
-        // initialize the row
-        $this->setRow($row);
-
-        // process the functionality and return the row
-        $this->process();
-
-        // return the processed row
-        return $this->getRow();
-    }
-
-    /**
      * Process the observer's business logic.
      *
      * @return array The processed row
@@ -80,17 +59,39 @@ class VariantObserver extends AbstractProductImportObserver
     {
 
         // load and map the parent + child ID
-        $this->parentId = $this->mapParentSku($this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
-        $this->childId = $this->mapChildSku($this->getValue(ColumnKeys::VARIANT_CHILD_SKU));
+        $this->parentId = $this->mapParentSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
+        $this->childId = $this->mapChildSku($childSku = $this->getValue(ColumnKeys::VARIANT_CHILD_SKU));
 
-        // prepare and persist the product relation
-        if ($productRelation = $this->initializeProductRelation($this->prepareProductRelationAttributes())) {
-            $this->persistProductRelation($productRelation);
-        }
+        try {
+            // prepare and persist the product relation
+            if ($productRelation = $this->initializeProductRelation($this->prepareProductRelationAttributes())) {
+                $this->persistProductRelation($productRelation);
+            }
 
-        // prepare and persist the product super link
-        if ($productSuperLink = $this->initializeProductSuperLink($this->prepareProductSuperLinkAttributes())) {
-            $this->persistProductSuperLink($productSuperLink);
+            // prepare and persist the product super link
+            if ($productSuperLink = $this->initializeProductSuperLink($this->prepareProductSuperLinkAttributes())) {
+                $this->persistProductSuperLink($productSuperLink);
+            }
+
+        } catch (\Exception $e) {
+            // prepare a more detailed error message
+            $message = sprintf(
+                'Product relation with SKUs %s => %s can\'t be created in file %s on line %d',
+                $parentSku,
+                $childSku,
+                $this->getFilename(),
+                $this->getLineNumber()
+            );
+
+            // query whether or not, debug mode is enabled
+            if ($this->isDebugMode()) {
+                // log a warning and return immediately
+                $this->getSystemLogger()->warning($message);
+                return;
+            }
+
+            // if we're NOT in debug mode, re-throw a more detailed exception
+            throw new \Exception($message, null, $e);
         }
     }
 

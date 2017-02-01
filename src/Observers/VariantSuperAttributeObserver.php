@@ -59,27 +59,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     protected $productSuperAttributeId;
 
     /**
-     * Will be invoked by the action on the events the listener has been registered for.
-     *
-     * @param array $row The row to handle
-     *
-     * @return array The modified row
-     * @see \TechDivision\Import\Product\Observers\ImportObserverInterface::handle()
-     */
-    public function handle(array $row)
-    {
-
-        // initialize the row
-        $this->setRow($row);
-
-        // process the functionality and return the row
-        $this->process();
-
-        // return the processed row
-        return $this->getRow();
-    }
-
-    /**
      * Process the observer's business logic.
      *
      * @return array The processed row
@@ -88,7 +67,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     {
 
         // load parent/child IDs
-        $parentId = $this->mapParentSku($this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
+        $parentId = $this->mapParentSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
 
         // query whether or not, the parent ID have changed
         if ($this->isParentId($parentId)) {
@@ -101,23 +80,45 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
         // preserve the parent ID
         $this->setParentId($parentId);
 
-        // extract the parent/child ID as well as option value and variation label from the row
-        $optionValue = $this->getValue(ColumnKeys::VARIANT_OPTION_VALUE);
+        // extract the option value and attribute code from the row
+        $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
 
         // load the store ID
         $store = $this->getStoreByStoreCode($this->getStoreViewCode(StoreViewCodes::ADMIN));
         $this->storeId = $store[MemberNames::STORE_ID];
 
-        // load the EAV attribute
-        $this->eavAttribute = $this->getEavAttributeByOptionValueAndStoreId($optionValue, $this->storeId);
+        // load the EAV attribute with the found attribute code
+        $this->eavAttribute = $this->getEavAttributeByAttributeCode($attributeCode);
 
-        // initialize and save the super attribute
-        $productSuperAttribute = $this->initializeProductSuperAttribute($this->prepareProducSuperAttributeAttributes());
-        $this->productSuperAttributeId = $this->persistProductSuperAttribute($productSuperAttribute);
+        try {
+            // initialize and save the super attribute
+            $productSuperAttribute = $this->initializeProductSuperAttribute($this->prepareProducSuperAttributeAttributes());
+            $this->productSuperAttributeId = $this->persistProductSuperAttribute($productSuperAttribute);
 
-        // initialize and save the super attribute label
-        $productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($this->prepareProductSuperAttributeLabelAttributes());
-        $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
+            // initialize and save the super attribute label
+            $productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($this->prepareProductSuperAttributeLabelAttributes());
+            $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
+
+        } catch (\Exception $e) {
+            // prepare a more detailed error messsage
+            $message = sprintf(
+                'Super attribute for SKU %s and attribute %s can\'t be created in file %s on line %d',
+                $parentSku,
+                $attributeCode,
+                $this->getFilename(),
+                $this->getLineNumber()
+            );
+
+            // query whether or not, debug mode is enabled
+            if ($this->isDebugMode()) {
+                // log a warning and return immediately
+                $this->getSystemLogger()->warning($message);
+                return;
+            }
+
+            // if we're NOT in debug mode, re-throw a more detailed exception
+            throw new \Exception($message, null, $e);
+        }
     }
 
     /**
@@ -278,16 +279,15 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     }
 
     /**
-     * Return's the first EAV attribute for the passed option value and store ID.
+     * Return's the first EAV attribute for the passed attribute code.
      *
-     * @param string $optionValue The option value of the EAV attributes
-     * @param string $storeId     The store ID of the EAV attribues
+     * @param string $attributeCode The attribute code
      *
      * @return array The array with the EAV attribute
      */
-    protected function getEavAttributeByOptionValueAndStoreId($optionValue, $storeId)
+    protected function getEavAttributeByAttributeCode($attributeCode)
     {
-        return $this->getSubject()->getEavAttributeByOptionValueAndStoreId($optionValue, $storeId);
+        return $this->getSubject()->getEavAttributeByAttributeCode($attributeCode);
     }
 
     /**

@@ -1,3 +1,14 @@
+# Version 1.0.0-alpha6
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Remove unnecessary handle() methods from observers
+* Ignore double/invalid SKUs for configurable products
+
 # Version 1.0.0-alpha5
 
 ## Bugfixes
