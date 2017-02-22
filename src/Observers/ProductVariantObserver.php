@@ -79,6 +79,9 @@ class ProductVariantObserver extends AbstractProductImportObserver
             // load the store view code
             $storeViewCode = $this->getValue(ColumnKeys::STORE_VIEW_CODE);
 
+            // load the product's attribute set code
+            $attributeSetCode = $this->getValue(ColumnKeys::ATTRIBUTE_SET_CODE);
+
             // iterate over all variations and import them
             foreach ($this->explode($configurableVariations, '|') as $variation) {
                 // sku=Configurable Product 48-option 2,configurable_variation=option 2
@@ -97,6 +100,7 @@ class ProductVariantObserver extends AbstractProductImportObserver
                 // append the product variation
                 $artefacts[] = array(
                     ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
+                    ColumnKeys::ATTRIBUTE_SET_CODE      => $attributeSetCode,
                     ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
                     ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
                     ColumnKeys::VARIANT_ATTRIBUTE_CODE  => $optionCode,
