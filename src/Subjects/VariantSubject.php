@@ -22,7 +22,6 @@ namespace TechDivision\Import\Product\Variant\Subjects;
 
 use TechDivision\Import\Utils\RegistryKeys;
 use TechDivision\Import\Product\Subjects\AbstractProductSubject;
-use TechDivision\Import\Product\Variant\Utils\MemberNames;
 
 /**
  * A SLSB that handles the process to import product variants.
@@ -132,39 +131,6 @@ class VariantSubject extends AbstractProductSubject
 
         // throw an exception, if not
         throw new \Exception(sprintf('Found invalid store code %s', $storeCode));
-    }
-
-    /**
-     * Return's the EAV attribute with the passed attribute code.
-     *
-     * @param string $attributeCode The attribute code
-     *
-     * @return array The array with the EAV attribute
-     * @throws \Exception Is thrown if the attribute with the passed code is not available
-     */
-    public function getEavAttributeByAttributeCode($attributeCode)
-    {
-
-        // iterate over the attributes to find the one with the passed code
-        foreach ($this->attributes as $attributes) {
-            foreach ($attributes as $attribute) {
-                if (isset($attribute[MemberNames::ATTRIBUTE_CODE]) &&
-                    $attribute[MemberNames::ATTRIBUTE_CODE] === $attributeCode
-                ) {
-                    return $attribute;
-                }
-            }
-        }
-
-        // throw an exception if the requested attribute is not available
-        throw new \Exception(
-            sprintf(
-                'Can\'t load attribute with code %s in file %s and line %d',
-                $attributeCode,
-                $this->getFilename(),
-                $this->getLineNumber()
-            )
-        );
     }
 
     /**

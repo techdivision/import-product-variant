@@ -1,3 +1,13 @@
+# Version 1.0.0-alpha7
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Move attribute set initialization to AttributeSetObserver in techdivision/import package
+
 # Version 1.0.0-alpha6
 
 ## Bugfixes
