@@ -97,21 +97,48 @@ class ProductVariantObserver extends AbstractProductImportObserver
                     $varLabel = $varLabels[$optionCode];
                 }
 
-                // append the product variation
-                $artefacts[] = array(
-                    ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
-                    ColumnKeys::ATTRIBUTE_SET_CODE      => $attributeSetCode,
-                    ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
-                    ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
-                    ColumnKeys::VARIANT_ATTRIBUTE_CODE  => $optionCode,
-                    ColumnKeys::VARIANT_OPTION_VALUE    => $optionValue,
-                    ColumnKeys::VARIANT_VARIATION_LABEL => $varLabel
+                // initialize the product variation itself
+                $variation = $this->newArtefact(
+                    array(
+                        ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
+                        ColumnKeys::ATTRIBUTE_SET_CODE      => $attributeSetCode,
+                        ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
+                        ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
+                        ColumnKeys::VARIANT_ATTRIBUTE_CODE  => $optionCode,
+                        ColumnKeys::VARIANT_OPTION_VALUE    => $optionValue,
+                        ColumnKeys::VARIANT_VARIATION_LABEL => $varLabel
+                    ),
+                    array(
+                        ColumnKeys::STORE_VIEW_CODE         => ColumnKeys::STORE_VIEW_CODE,
+                        ColumnKeys::ATTRIBUTE_SET_CODE      => ColumnKeys::ATTRIBUTE_SET_CODE,
+                        ColumnKeys::VARIANT_PARENT_SKU      => ColumnKeys::SKU,
+                        ColumnKeys::VARIANT_CHILD_SKU       => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                        ColumnKeys::VARIANT_ATTRIBUTE_CODE  => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                        ColumnKeys::VARIANT_OPTION_VALUE    => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                        ColumnKeys::VARIANT_VARIATION_LABEL => ColumnKeys::CONFIGURABLE_VARIATION_LABELS
+                    )
                 );
+
+                // append the product variation
+                $artefacts[] = $variation;
             }
 
             // append the variations to the subject
             $this->addArtefacts($artefacts);
         }
+    }
+
+    /**
+     * Create's and return's a new empty artefact entity.
+     *
+     * @param array $columns             The array with the column data
+     * @param array $originalColumnNames The array with a mapping from the old to the new column names
+     *
+     * @return array The new artefact entity
+     */
+    protected function newArtefact(array $columns, array $originalColumnNames)
+    {
+        return $this->getSubject()->newArtefact($columns, $originalColumnNames);
     }
 
     /**

@@ -110,7 +110,11 @@ class VariantSubject extends AbstractProductSubject
         }
 
         // throw an exception if the SKU has not been mapped yet
-        throw new \Exception(sprintf('Found not mapped SKU %s', $sku));
+        throw new \Exception(
+            $this->appendExceptionSuffix(
+                sprintf('Found not mapped entity ID for SKU %s', $sku)
+            )
+        );
     }
 
     /**
@@ -130,7 +134,11 @@ class VariantSubject extends AbstractProductSubject
         }
 
         // throw an exception, if not
-        throw new \Exception(sprintf('Found invalid store code %s', $storeCode));
+        throw new \Exception(
+            $this->appendExceptionSuffix(
+                sprintf('Found invalid store code %s', $storeCode)
+            )
+        );
     }
 
     /**
