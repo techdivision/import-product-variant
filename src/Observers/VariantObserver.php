@@ -58,9 +58,20 @@ class VariantObserver extends AbstractProductImportObserver
     protected function process()
     {
 
-        // load and map the parent + child ID
-        $this->parentId = $this->mapParentSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
-        $this->childId = $this->mapChildSku($childSku = $this->getValue(ColumnKeys::VARIANT_CHILD_SKU));
+        try {
+            // try to load and map the parent ID
+            $this->parentId = $this->mapParentSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
+        } catch (\Exception $e) {
+            throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
+        }
+
+
+        try {
+            // try to load and map the child ID
+            $this->childId = $this->mapChildSku($childSku = $this->getValue(ColumnKeys::VARIANT_CHILD_SKU));
+        } catch (\Exception $e) {
+            throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
+        }
 
         try {
             // prepare and persist the product relation
@@ -75,23 +86,29 @@ class VariantObserver extends AbstractProductImportObserver
 
         } catch (\Exception $e) {
             // prepare a more detailed error message
-            $message = sprintf(
-                'Product relation with SKUs %s => %s can\'t be created in file %s on line %d',
-                $parentSku,
-                $childSku,
-                $this->getFilename(),
-                $this->getLineNumber()
+            $message = $this->appendExceptionSuffix(
+                sprintf(
+                    'Product relation with SKUs %s => %s can\'t be created',
+                    $parentSku,
+                    $childSku
+                )
+            );
+
+            // if we're NOT in debug mode, re-throw a more detailed exception
+            $wrappedException = $this->wrapException(
+                array(ColumnKeys::VARIANT_PARENT_SKU, ColumnKeys::VARIANT_CHILD_SKU),
+                new \Exception($message, null, $e)
             );
 
             // query whether or not, debug mode is enabled
             if ($this->isDebugMode()) {
                 // log a warning and return immediately
-                $this->getSystemLogger()->warning($message);
+                $this->getSystemLogger()->warning($wrappedException->getMessage());
                 return;
             }
 
-            // if we're NOT in debug mode, re-throw a more detailed exception
-            throw new \Exception($message, null, $e);
+            // else, throw the exception
+            throw $wrappedException;
         }
     }
 

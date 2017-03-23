@@ -83,12 +83,16 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
         // extract the option value and attribute code from the row
         $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
 
-        // load the store ID
+        // load the store and set the store ID
         $store = $this->getStoreByStoreCode($this->getStoreViewCode(StoreViewCodes::ADMIN));
         $this->storeId = $store[MemberNames::STORE_ID];
 
-        // load the EAV attribute with the found attribute code
-        $this->eavAttribute = $this->getEavAttributeByAttributeCode($attributeCode);
+        try {
+            // load the EAV attribute with the found attribute code
+            $this->eavAttribute = $this->getEavAttributeByAttributeCode($attributeCode);
+        } catch (\Exception $e) {
+            throw $this->wrapException(array(ColumnKeys::VARIANT_ATTRIBUTE_CODE), $e);
+        }
 
         try {
             // initialize and save the super attribute
@@ -100,24 +104,30 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
             $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
 
         } catch (\Exception $e) {
-            // prepare a more detailed error messsage
-            $message = sprintf(
-                'Super attribute for SKU %s and attribute %s can\'t be created in file %s on line %d',
-                $parentSku,
-                $attributeCode,
-                $this->getFilename(),
-                $this->getLineNumber()
+            // prepare a more detailed error message
+            $message = $this->appendExceptionSuffix(
+                sprintf(
+                    'Super attribute for SKU %s and attribute %s can\'t be created',
+                    $parentSku,
+                    $attributeCode
+                )
+            );
+
+            // if we're NOT in debug mode, re-throw a more detailed exception
+            $wrappedException = $this->wrapException(
+                array(ColumnKeys::VARIANT_PARENT_SKU, ColumnKeys::VARIANT_ATTRIBUTE_CODE),
+                new \Exception($message, null, $e)
             );
 
             // query whether or not, debug mode is enabled
             if ($this->isDebugMode()) {
                 // log a warning and return immediately
-                $this->getSystemLogger()->warning($message);
+                $this->getSystemLogger()->warning($wrappedException->getMessage());
                 return;
             }
 
-            // if we're NOT in debug mode, re-throw a more detailed exception
-            throw new \Exception($message, null, $e);
+            // else, throw the exception
+            throw $wrappedException;
         }
     }
 
