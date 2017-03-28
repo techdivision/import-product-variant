@@ -20,6 +20,17 @@
 
 namespace TechDivision\Import\Product\Variant\Services;
 
+use TechDivision\Import\Repositories\EavAttributeOptionValueRepository;
+use TechDivision\Import\Repositories\EavAttributeRepository;
+use TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository;
+use TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepository;
+use TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository;
+use TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepository;
+use TechDivision\Import\Product\Variant\Actions\ProductRelationAction;
+use TechDivision\Import\Product\Variant\Actions\ProductSuperLinkAction;
+use TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction;
+use TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelAction;
+
 /**
  * A SLSB providing methods to load product data using a PDO connection.
  *
@@ -38,13 +49,6 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      * @var \PDO
      */
     protected $connection;
-
-    /**
-     * The repository to access EAV attribute set.
-     *
-     * @var \TechDivision\Import\Product\Repositories\EavAttributeSetRepository
-     */
-    protected $eavAttributeSetRepository;
 
     /**
      * The repository to access product relations.
@@ -73,6 +77,13 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      * @var \TechDivision\Import\Product\Repositories\ProductSuperAttributeLabelRepository
      */
     protected $productSuperAttributeLabelRepository;
+
+    /**
+     * The repository to access EAV attributes.
+     *
+     * @var \TechDivision\Import\Product\Repositories\EavAttributeRepository
+     */
+    protected $eavAttributeRepository;
 
     /**
      * The repository to access EAV attribute option values.
@@ -108,6 +119,47 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      * @var \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkAction
      */
     protected $productSuperLinkAction;
+
+    /**
+     * Initialize the processor with the necessary assembler and repository instances.
+     *
+     * @param \PDO                                                                           $connection                           The PDO connection to use
+     * @param \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository    $eavAttributeOptionValueRepository    The EAV attribute option value repository to use
+     * @param \TechDivision\Import\Product\Repositories\EavAttributeRepository               $eavAttributeRepository               The EAV attribute repository to use
+     * @param \TechDivision\Import\Product\Repositories\ProductRelationRepository            $productRelationRepository            The product relation repository to use
+     * @param \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository           $productSuperLinkRepository           The product super link repository to use
+     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository      $productSuperAttributeRepository      The product super attribute repository to use
+     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeLabelRepository $productSuperAttributeLabelRepository The product super attribute label repository to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductRelationAction             $productRelationAction                The product relation action to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkAction            $productSuperLinkAction               The product super link action to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction       $productSuperAttributeAction          The product super attribute action to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelAction  $productSuperAttributeLabelAction     The product super attribute label action to use
+     */
+    public function __construct(
+        \PDO $connection,
+        EavAttributeOptionValueRepository $eavAttributeOptionValueRepository,
+        EavAttributeRepository $eavAttributeRepository,
+        ProductRelationRepository $productRelationRepository,
+        ProductSuperLinkRepository $productSuperLinkRepository,
+        ProductSuperAttributeRepository $productSuperAttributeRepository,
+        ProductSuperAttributeLabelRepository $productSuperAttributeLabelRepository,
+        ProductRelationAction $productRelationAction,
+        ProductSuperLinkAction $productSuperLinkAction,
+        ProductSuperAttributeAction $productSuperAttributeAction,
+        ProductSuperAttributeLabelAction $productSuperAttributeLabelAction
+    ) {
+        $this->setConnection($connection);
+        $this->setEavAttributeOptionValueRepository($eavAttributeOptionValueRepository);
+        $this->setEavAttributeRepository($eavAttributeRepository);
+        $this->setProductRelationRepository($productRelationRepository);
+        $this->setProductSuperLinkRepository($productSuperLinkRepository);
+        $this->setProductSuperAttributeRepository($productSuperAttributeRepository);
+        $this->setProductSuperAttributeLabelRepository($productSuperAttributeLabelRepository);
+        $this->setProductRelationAction($productRelationAction);
+        $this->setProductSuperLinkAction($productSuperLinkAction);
+        $this->setProductSuperAttributeAction($productSuperAttributeAction);
+        $this->setProductSuperAttributeLabelAction($productSuperAttributeLabelAction);
+    }
 
     /**
      * Set's the passed connection.

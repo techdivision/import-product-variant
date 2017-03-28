@@ -1,3 +1,13 @@
+# Version 1.0.0-alpha9
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Refactoring for DI integration
+
 # Version 1.0.0-alpha8
 
 ## Bugfixes
