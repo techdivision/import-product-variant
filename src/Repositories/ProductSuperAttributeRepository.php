@@ -54,7 +54,8 @@ class ProductSuperAttributeRepository extends AbstractRepository
         $utilityClassName = $this->getUtilityClassName();
 
         // initialize the prepared statements
-        $this->productSuperAttributeStmt = $this->getConnection()->prepare($utilityClassName::PRODUCT_SUPER_ATTRIBUTE);
+        $this->productSuperAttributeStmt =
+            $this->getConnection()->prepare($this->getUtilityClass()->find($utilityClassName::PRODUCT_SUPER_ATTRIBUTE));
     }
 
     /**

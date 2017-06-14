@@ -49,7 +49,7 @@ class ProductSuperAttributeUpdateProcessor extends AbstractUpdateProcessor
 
         // return the array with the SQL statements that has to be prepared
         return array(
-            $utilityClassName::UPDATE_PRODUCT_SUPER_ATTRIBUTE => $utilityClassName::UPDATE_PRODUCT_SUPER_ATTRIBUTE
+            $utilityClassName::UPDATE_PRODUCT_SUPER_ATTRIBUTE => $this->getUtilityClass()->find($utilityClassName::UPDATE_PRODUCT_SUPER_ATTRIBUTE)
         );
     }
 

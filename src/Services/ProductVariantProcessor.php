@@ -20,6 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Services;
 
+use TechDivision\Import\Connection\ConnectionInterface;
 use TechDivision\Import\Repositories\EavAttributeOptionValueRepository;
 use TechDivision\Import\Repositories\EavAttributeRepository;
 use TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository;
@@ -46,7 +47,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * A PDO connection initialized with the values from the Doctrine EntityManager.
      *
-     * @var \PDO
+     * @var \TechDivision\Import\Connection\ConnectionInterface
      */
     protected $connection;
 
@@ -123,7 +124,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Initialize the processor with the necessary assembler and repository instances.
      *
-     * @param \PDO                                                                           $connection                           The PDO connection to use
+     * @param \TechDivision\Import\Connection\ConnectionInterface                            $connection                           The connection to use
      * @param \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository    $eavAttributeOptionValueRepository    The EAV attribute option value repository to use
      * @param \TechDivision\Import\Product\Repositories\EavAttributeRepository               $eavAttributeRepository               The EAV attribute repository to use
      * @param \TechDivision\Import\Product\Repositories\ProductRelationRepository            $productRelationRepository            The product relation repository to use
@@ -136,7 +137,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelAction  $productSuperAttributeLabelAction     The product super attribute label action to use
      */
     public function __construct(
-        \PDO $connection,
+        ConnectionInterface $connection,
         EavAttributeOptionValueRepository $eavAttributeOptionValueRepository,
         EavAttributeRepository $eavAttributeRepository,
         ProductRelationRepository $productRelationRepository,
@@ -164,11 +165,11 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the passed connection.
      *
-     * @param \PDO $connection The connection to set
+     * @param \TechDivision\Import\Connection\ConnectionInterface $connection The connection to set
      *
      * @return void
      */
-    public function setConnection(\PDO $connection)
+    public function setConnection(ConnectionInterface $connection)
     {
         $this->connection = $connection;
     }
@@ -176,7 +177,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the connection.
      *
-     * @return \PDO The connection instance
+     * @return \TechDivision\Import\Connection\ConnectionInterface The connection instance
      */
     public function getConnection()
     {

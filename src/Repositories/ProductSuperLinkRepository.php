@@ -54,7 +54,8 @@ class ProductSuperLinkRepository extends AbstractRepository
         $utilityClassName = $this->getUtilityClassName();
 
         // initialize the prepared statements
-        $this->productSuperLinkStmt = $this->getConnection()->prepare($utilityClassName::PRODUCT_SUPER_LINK);
+        $this->productSuperLinkStmt =
+            $this->getConnection()->prepare($this->getUtilityClass()->find($utilityClassName::PRODUCT_SUPER_LINK));
     }
 
     /**
