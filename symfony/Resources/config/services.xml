@@ -84,10 +84,7 @@
         <service id="import_product_variant.observer.variant.super.attribute.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeUpdateObserver"/>
         <service id="import_product_variant.observer.variant.update" class="TechDivision\Import\Product\Variant\Observers\VariantUpdateObserver"/>
 
-        <service id="configuration.import_product_variant.subject.variant" synthetic="true" />
-
         <service id="import_product_variant.subject.variant" class="TechDivision\Import\Product\Variant\Subjects\VariantSubject" shared="false">
-            <argument type="service" id="configuration.import_product_variant.subject.variant"/>
             <argument type="service" id="import.processor.registry"/>
             <argument type="service" id="import.generator.core.config.data.uid"/>
             <argument type="service" id="loggers"/>
