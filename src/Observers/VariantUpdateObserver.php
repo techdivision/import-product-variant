@@ -90,7 +90,7 @@ class VariantUpdateObserver extends VariantObserver
      */
     protected function loadProductRelation($parentId, $childId)
     {
-        return $this->getSubject()->loadProductRelation($parentId, $childId);
+        return $this->getProductVariantProcessor()->loadProductRelation($parentId, $childId);
     }
 
     /**
@@ -103,6 +103,6 @@ class VariantUpdateObserver extends VariantObserver
      */
     protected function loadProductSuperLink($productId, $parentId)
     {
-        return $this->getSubject()->loadProductSuperLink($productId, $parentId);
+        return $this->getProductVariantProcessor()->loadProductSuperLink($productId, $parentId);
     }
 }
