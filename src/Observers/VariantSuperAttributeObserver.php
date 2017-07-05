@@ -24,6 +24,7 @@ use TechDivision\Import\Utils\StoreViewCodes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
+use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface;
 
 /**
  * Oberserver that provides functionality for the product variant super attributes replace operation.
@@ -57,6 +58,33 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      * @var integer
      */
     protected $productSuperAttributeId;
+
+    /**
+     * The product variant processor instance.
+     *
+     * @var \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface
+     */
+    protected $productVariantProcessor;
+
+    /**
+     * Initialize the observer with the passed product variant processor instance.
+     *
+     * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
+     */
+    public function __construct(ProductVariantProcessorInterface $productVariantProcessor)
+    {
+        $this->productVariantProcessor = $productVariantProcessor;
+    }
+
+    /**
+     * Return's the product variant processor instance.
+     *
+     * @return \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface The product variant processor instance
+     */
+    protected function getProductVariantProcessor()
+    {
+        return $this->productVariantProcessor;
+    }
 
     /**
      * Process the observer's business logic.
@@ -309,7 +337,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      */
     protected function persistProductSuperAttribute($productSuperAttribute)
     {
-        return $this->getSubject()->persistProductSuperAttribute($productSuperAttribute);
+        return $this->getProductVariantProcessor()->persistProductSuperAttribute($productSuperAttribute);
     }
 
     /**
@@ -321,6 +349,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      */
     protected function persistProductSuperAttributeLabel($productSuperAttributeLabel)
     {
-        return $this->getSubject()->persistProductSuperAttributeLabel($productSuperAttributeLabel);
+        return $this->getProductVariantProcessor()->persistProductSuperAttributeLabel($productSuperAttributeLabel);
     }
 }

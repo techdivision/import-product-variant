@@ -90,7 +90,7 @@ class VariantSuperAttributeUpdateObserver extends VariantSuperAttributeObserver
      */
     protected function loadProductSuperAttribute($productId, $attributeId)
     {
-        return $this->getSubject()->loadProductSuperAttribute($productId, $attributeId);
+        return $this->getProductVariantProcessor()->loadProductSuperAttribute($productId, $attributeId);
     }
 
     /**
@@ -103,6 +103,6 @@ class VariantSuperAttributeUpdateObserver extends VariantSuperAttributeObserver
      */
     protected function loadProductSuperAttributeLabel($productSuperAttributeId, $storeId)
     {
-        return $this->getSubject()->loadProductSuperAttributeLabel($productSuperAttributeId, $storeId);
+        return $this->getProductVariantProcessor()->loadProductSuperAttributeLabel($productSuperAttributeId, $storeId);
     }
 }
