@@ -54,42 +54,42 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * The repository to access product relations.
      *
-     * @var \TechDivision\Import\Product\Repositories\ProductRelationRepository
+     * @var \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository
      */
     protected $productRelationRepository;
 
     /**
      * The repository to access product relations.
      *
-     * @var \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository
+     * @var \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepository
      */
     protected $productSuperLinkRepository;
 
     /**
      * The repository to access product super attributes.
      *
-     * @var \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository
+     * @var \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository
      */
     protected $productSuperAttributeRepository;
 
     /**
      * The repository to access product super attribute labels.
      *
-     * @var \TechDivision\Import\Product\Repositories\ProductSuperAttributeLabelRepository
+     * @var \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepository
      */
     protected $productSuperAttributeLabelRepository;
 
     /**
      * The repository to access EAV attributes.
      *
-     * @var \TechDivision\Import\Product\Repositories\EavAttributeRepository
+     * @var \TechDivision\Import\Repositories\EavAttributeRepository
      */
     protected $eavAttributeRepository;
 
     /**
      * The repository to access EAV attribute option values.
      *
-     * @var \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository
+     * @var \TechDivision\Import\Repositories\EavAttributeOptionValueRepository
      */
     protected $eavAttributeOptionValueRepository;
 
@@ -124,17 +124,17 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Initialize the processor with the necessary assembler and repository instances.
      *
-     * @param \TechDivision\Import\Connection\ConnectionInterface                            $connection                           The connection to use
-     * @param \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository    $eavAttributeOptionValueRepository    The EAV attribute option value repository to use
-     * @param \TechDivision\Import\Product\Repositories\EavAttributeRepository               $eavAttributeRepository               The EAV attribute repository to use
-     * @param \TechDivision\Import\Product\Repositories\ProductRelationRepository            $productRelationRepository            The product relation repository to use
-     * @param \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository           $productSuperLinkRepository           The product super link repository to use
-     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository      $productSuperAttributeRepository      The product super attribute repository to use
-     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeLabelRepository $productSuperAttributeLabelRepository The product super attribute label repository to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductRelationAction             $productRelationAction                The product relation action to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkAction            $productSuperLinkAction               The product super link action to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction       $productSuperAttributeAction          The product super attribute action to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelAction  $productSuperAttributeLabelAction     The product super attribute label action to use
+     * @param \TechDivision\Import\Connection\ConnectionInterface                                    $connection                           The connection to use
+     * @param \TechDivision\Import\Repositories\EavAttributeOptionValueRepository                    $eavAttributeOptionValueRepository    The EAV attribute option value repository to use
+     * @param \TechDivision\Import\Repositories\EavAttributeRepository                               $eavAttributeRepository               The EAV attribute repository to use
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository            $productRelationRepository            The product relation repository to use
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepository           $productSuperLinkRepository           The product super link repository to use
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository      $productSuperAttributeRepository      The product super attribute repository to use
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepository $productSuperAttributeLabelRepository The product super attribute label repository to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductRelationAction                     $productRelationAction                The product relation action to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkAction                    $productSuperLinkAction               The product super link action to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction               $productSuperAttributeAction          The product super attribute action to use
+     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelAction          $productSuperAttributeLabelAction     The product super attribute label action to use
      */
     public function __construct(
         ConnectionInterface $connection,
@@ -231,7 +231,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the repository to access EAV attributes.
      *
-     * @param \TechDivision\Import\Product\Repositories\EavAttributeRepository $eavAttributeRepository The repository to access EAV attributes
+     * @param \TechDivision\Import\Repositories\EavAttributeRepository $eavAttributeRepository The repository to access EAV attributes
      *
      * @return void
      */
@@ -243,7 +243,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the repository to access EAV attributes.
      *
-     * @return \TechDivision\Import\Product\Repositories\EavAttributeRepository The repository instance
+     * @return \TechDivision\Import\Repositories\EavAttributeRepository The repository instance
      */
     public function getEavAttributeRepository()
     {
@@ -253,7 +253,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the repository to access product relations.
      *
-     * @param \TechDivision\Import\Product\Repositories\ProductRelationRepository $productRelationRepository The repository instance
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository $productRelationRepository The repository instance
      *
      * @return void
      */
@@ -265,7 +265,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the repository to access product relations.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductRelationRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository The repository instance
      */
     public function getProductRelationRepository()
     {
@@ -275,7 +275,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the repository to access product super links.
      *
-     * @param \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository $productSuperLinkRepository The repository instance
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepository $productSuperLinkRepository The repository instance
      *
      * @return void
      */
@@ -287,7 +287,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the repository to access product super links.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepository The repository instance
      */
     public function getProductSuperLinkRepository()
     {
@@ -297,7 +297,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the repository to access product super attributes.
      *
-     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository $productSuperAttributeRepository The repository instance
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository $productSuperAttributeRepository The repository instance
      *
      * @return void
      */
@@ -309,7 +309,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the repository to access product super attributes.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository The repository instance
      */
     public function getProductSuperAttributeRepository()
     {
@@ -319,7 +319,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the repository to access product super attribute labels.
      *
-     * @param \TechDivision\Import\Product\Repositories\ProductSuperAttributeLabelRepository $productSuperAttributeLabelRepository The repository instance
+     * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepository $productSuperAttributeLabelRepository The repository instance
      *
      * @return void
      */
@@ -331,7 +331,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the repository to access product super attribute labels.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributLabeleRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepository The repository instance
      */
     public function getProductSuperAttributeLabelRepository()
     {
@@ -341,7 +341,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the repository to access EAV attribute option values.
      *
-     * @param \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository $eavAttributeOptionValueRepository The repository to access EAV attribute option values
+     * @param \TechDivision\Import\Repositories\EavAttributeOptionValueRepository $eavAttributeOptionValueRepository The repository to access EAV attribute option values
      *
      * @return void
      */
@@ -353,7 +353,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the repository to access EAV attribute option values.
      *
-     * @return \TechDivision\Import\Product\Repositories\EavAttributeOptionValueRepository The repository instance
+     * @return \TechDivision\Import\Repositories\EavAttributeOptionValueRepository The repository instance
      */
     public function getEavAttributeOptionValueRepository()
     {
