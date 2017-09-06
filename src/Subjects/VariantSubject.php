@@ -55,7 +55,6 @@ class VariantSubject extends AbstractProductSubject
      * @param string $serial The serial of the actual import
      *
      * @return void
-     * @see \Importer\Csv\Actions\ProductImportAction::prepare()
      */
     public function setUp($serial)
     {

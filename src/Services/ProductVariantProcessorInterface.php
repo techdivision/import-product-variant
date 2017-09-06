@@ -37,35 +37,35 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
     /**
      * Return's the repository to access EAV attributes.
      *
-     * @return \TechDivision\Import\Product\Repositories\EavAttributeRepository The repository instance
+     * @return \TechDivision\Import\Repositories\EavAttributeRepository The repository instance
      */
     public function getEavAttributeRepository();
 
     /**
      * Return's the repository to access product relations.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductRelationRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository The repository instance
      */
     public function getProductRelationRepository();
 
     /**
      * Return's the repository to access product super attributes.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributeRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository The repository instance
      */
     public function getProductSuperAttributeRepository();
 
     /**
      * Return's the repository to access product super attribute labels.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductSuperAttributLabeleRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepository The repository instance
      */
     public function getProductSuperAttributeLabelRepository();
 
     /**
      * Return's the repository to access product super links.
      *
-     * @return \TechDivision\Import\Product\Repositories\ProductSuperLinkRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepository The repository instance
      */
     public function getProductSuperLinkRepository();
 
