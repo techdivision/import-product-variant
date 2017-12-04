@@ -22,6 +22,7 @@ namespace TechDivision\Import\Product\Variant\Repositories;
 
 use TechDivision\Import\Repositories\AbstractRepository;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
+use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
 
 /**
  * Repository implementation to load product super attribute data.
@@ -50,12 +51,9 @@ class ProductSuperAttributeRepository extends AbstractRepository
     public function init()
     {
 
-        // load the utility class name
-        $utilityClassName = $this->getUtilityClassName();
-
         // initialize the prepared statements
         $this->productSuperAttributeStmt =
-            $this->getConnection()->prepare($this->getUtilityClass()->find($utilityClassName::PRODUCT_SUPER_ATTRIBUTE));
+            $this->getConnection()->prepare($this->loadStatement(SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE));
     }
 
     /**

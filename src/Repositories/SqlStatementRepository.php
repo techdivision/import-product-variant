@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Utils\SqlStatements
+ * TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository
  *
  * NOTICE OF LICENSE
  *
@@ -18,10 +18,12 @@
  * @link      http://www.techdivision.com
  */
 
-namespace TechDivision\Import\Product\Variant\Utils;
+namespace TechDivision\Import\Product\Variant\Repositories;
+
+use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
 
 /**
- * Utility class with the SQL statements to use.
+ * Repository class with the SQL statements to use.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -29,78 +31,8 @@ namespace TechDivision\Import\Product\Variant\Utils;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class SqlStatements extends \TechDivision\Import\Product\Utils\SqlStatements
+class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\SqlStatementRepository
 {
-
-    /**
-     * The SQL statement to load an existing product relation with the passed parent/child ID.
-     *
-     * @var string
-     */
-    const PRODUCT_RELATION = 'product_relation';
-
-    /**
-     * The SQL statement to load an existing product super link with the passed prodcut/parent ID.
-     *
-     * @var string
-     */
-    const PRODUCT_SUPER_LINK = 'product_super_link';
-
-    /**
-     * The SQL statement to load an existing product super attribute with the passed product/attribute ID.
-     *
-     * @var string
-     */
-    const PRODUCT_SUPER_ATTRIBUTE = 'product_super_attribute';
-
-    /**
-     * The SQL statement to load an existing product super attribute label with the passed product super attribute/store ID.
-     *
-     * @var string
-     */
-    const PRODUCT_SUPER_ATTRIBUTE_LABEL = 'product_super_attribute_label';
-
-    /**
-     * The SQL statement to create a new product relation.
-     *
-     * @var string
-     */
-    const CREATE_PRODUCT_RELATION = 'create.product_relation';
-
-    /**
-     * The SQL statement to create a new product super link.
-     *
-     * @var string
-     */
-    const CREATE_PRODUCT_SUPER_LINK = 'create.product_super_link';
-
-    /**
-     * The SQL statement to create a new product super attribute.
-     *
-     * @var string
-     */
-    const CREATE_PRODUCT_SUPER_ATTRIBUTE = 'create.product_super_attribute';
-
-    /**
-     * The SQL statement to update an existing product super attribute.
-     *
-     * @var string
-     */
-    const UPDATE_PRODUCT_SUPER_ATTRIBUTE = 'update.product_super_attribute';
-
-    /**
-     * The SQL statement to create a new product super attribute label.
-     *
-     * @var string
-     */
-    const CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL = 'create.product_super_attribute_label';
-
-    /**
-     * The SQL statement to update an existing product super attribute label.
-     *
-     * @var string
-     */
-    const UPDATE_PRODUCT_SUPER_ATTRIBUTE_LABEL = 'update.product_super_attribute_label';
 
     /**
      * The SQL statements.
@@ -108,41 +40,41 @@ class SqlStatements extends \TechDivision\Import\Product\Utils\SqlStatements
      * @var array
      */
     private $statements = array(
-        SqlStatements::PRODUCT_RELATION =>
+        SqlStatementKeys::PRODUCT_RELATION =>
             'SELECT *
                FROM catalog_product_relation
               WHERE parent_id = :parent_id
                 AND child_id = :child_id',
-        SqlStatements::PRODUCT_SUPER_LINK =>
+        SqlStatementKeys::PRODUCT_SUPER_LINK =>
             'SELECT *
                FROM catalog_product_super_link
               WHERE product_id = :product_id
                 AND parent_id = :parent_id',
-        SqlStatements::PRODUCT_SUPER_ATTRIBUTE =>
+        SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE =>
             'SELECT *
                FROM catalog_product_super_attribute
               WHERE product_id = :product_id
                 AND attribute_id = :attribute_id',
-        SqlStatements::PRODUCT_SUPER_ATTRIBUTE_LABEL =>
+        SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'SELECT *
                FROM catalog_product_super_attribute_label
               WHERE product_super_attribute_id = :product_super_attribute_id
                 AND store_id = :store_id',
-        SqlStatements::CREATE_PRODUCT_RELATION =>
+        SqlStatementKeys::CREATE_PRODUCT_RELATION =>
             'INSERT
                INTO catalog_product_relation
                     (parent_id,
                      child_id)
              VALUES (:parent_id,
                      :child_id)',
-        SqlStatements::CREATE_PRODUCT_SUPER_LINK =>
+        SqlStatementKeys::CREATE_PRODUCT_SUPER_LINK =>
             'INSERT
                INTO catalog_product_super_link
                     (product_id,
                      parent_id)
              VALUES (:product_id,
                      :parent_id)',
-        SqlStatements::CREATE_PRODUCT_SUPER_ATTRIBUTE =>
+        SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE =>
             'INSERT
                INTO catalog_product_super_attribute
                     (product_id,
@@ -151,13 +83,13 @@ class SqlStatements extends \TechDivision\Import\Product\Utils\SqlStatements
              VALUES (:product_id,
                      :attribute_id,
                      :position)',
-        SqlStatements::UPDATE_PRODUCT_SUPER_ATTRIBUTE =>
+        SqlStatementKeys::UPDATE_PRODUCT_SUPER_ATTRIBUTE =>
             'UPDATE catalog_product_super_attribute
                 SET product_id = :product_id,
                     attribute_id = :attribute_id,
                     position = :position
               WHERE product_super_attribute_id = :product_super_attribute_id',
-        SqlStatements::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
+        SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'INSERT
                 INTO catalog_product_super_attribute_label
                      (product_super_attribute_id,
@@ -168,7 +100,7 @@ class SqlStatements extends \TechDivision\Import\Product\Utils\SqlStatements
                       :store_id,
                       :use_default,
                       :value)',
-        SqlStatements::UPDATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
+        SqlStatementKeys::UPDATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'UPDATE catalog_product_super_attribute_label
                 SET product_super_attribute_id = :product_super_attribute_id,
                     store_id = :store_id,
