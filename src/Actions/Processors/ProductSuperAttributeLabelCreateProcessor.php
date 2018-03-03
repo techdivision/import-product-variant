@@ -20,6 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
+use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
 use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
 
 /**
@@ -43,12 +44,9 @@ class ProductSuperAttributeLabelCreateProcessor extends AbstractCreateProcessor
     protected function getStatements()
     {
 
-        // load the utility class name
-        $utilityClassName = $this->getUtilityClassName();
-
         // return the array with the SQL statements that has to be prepared
         return array(
-            $utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL => $this->getUtilityClass()->find($utilityClassName::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL)
+            SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL => $this->loadStatement(SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL)
         );
     }
 }
