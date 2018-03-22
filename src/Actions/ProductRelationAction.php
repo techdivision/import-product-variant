@@ -31,6 +31,6 @@ use TechDivision\Import\Actions\AbstractAction;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductRelationAction extends AbstractAction
+class ProductRelationAction extends AbstractAction implements ProductRelationActionInterface
 {
 }

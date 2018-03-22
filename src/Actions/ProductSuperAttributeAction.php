@@ -32,7 +32,7 @@ use TechDivision\Import\Actions\AbstractAction;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperAttributeAction extends AbstractAction
+class ProductSuperAttributeAction extends AbstractAction implements ProductSuperAttributeActionInterface
 {
 
     /**
