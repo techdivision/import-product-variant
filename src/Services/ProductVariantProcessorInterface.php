@@ -23,7 +23,7 @@ namespace TechDivision\Import\Product\Variant\Services;
 use TechDivision\Import\Product\Services\ProductProcessorInterface;
 
 /**
- * A SLSB providing methods to load product data using a PDO connection.
+ * Interface for product variant processor implementations.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -37,63 +37,70 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
     /**
      * Return's the repository to access EAV attributes.
      *
-     * @return \TechDivision\Import\Repositories\EavAttributeRepository The repository instance
+     * @return \TechDivision\Import\Repositories\EavAttributeRepositoryInterface The repository instance
      */
     public function getEavAttributeRepository();
 
     /**
      * Return's the repository to access product relations.
      *
-     * @return \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface The repository instance
      */
     public function getProductRelationRepository();
 
     /**
+     * Return's the repository to access product super links.
+     *
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepositoryInterface The repository instance
+     */
+    public function getProductSuperLinkRepository();
+
+    /**
      * Return's the repository to access product super attributes.
      *
-     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepositoryInterface The repository instance
      */
     public function getProductSuperAttributeRepository();
 
     /**
      * Return's the repository to access product super attribute labels.
      *
-     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepository The repository instance
+     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepositoryInterface The repository instance
      */
     public function getProductSuperAttributeLabelRepository();
 
     /**
-     * Return's the repository to access product super links.
+     * Return's the repository to access EAV attribute option values.
      *
-     * @return \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepository The repository instance
+     * @return \TechDivision\Import\Repositories\EavAttributeOptionValueRepositoryInterface The repository instance
      */
-    public function getProductSuperLinkRepository();
+    public function getEavAttributeOptionValueRepository();
 
     /**
      * Return's the action with the product relation CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductRelationAction The action instance
+     * @return \TechDivision\Import\Product\Variant\Actions\ProductRelationActionInterface The action instance
      */
     public function getProductRelationAction();
 
     /**
      * Return's the action with the product super attribute CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction The action instance
+     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface The action instance
      */
     public function getProductSuperAttributeAction();
 
     /**
      * Return's the action with the product super attribute label CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelAction The action instance
+     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface The action instance
      */
     public function getProductSuperAttributeLabelAction();
 
     /**
      * Return's the action with the product super link CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkAction The action instance
+     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface The action instance
      */
     public function getProductSuperLinkAction();
 
@@ -118,6 +125,16 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
     public function loadProductRelation($parentId, $childId);
 
     /**
+     * Load's the product super link with the passed product/parent ID.
+     *
+     * @param integer $productId The entity ID of the product super link's product
+     * @param integer $parentId  The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function loadProductSuperLink($productId, $parentId);
+
+    /**
      * Load's the product super attribute with the passed product/attribute ID.
      *
      * @param integer $productId   The entity ID of the product super attribute's product
@@ -136,16 +153,6 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
      * @return array The product super attribute label
      */
     public function loadProductSuperAttributeLabel($productSuperAttributeId, $storeId);
-
-    /**
-     * Load's the product super link with the passed product/parent ID.
-     *
-     * @param integer $productId The entity ID of the product super link's product
-     * @param integer $parentId  The entity ID of the product super link's parent product
-     *
-     * @return array The product super link
-     */
-    public function loadProductSuperLink($productId, $parentId);
 
     /**
      * Persist's the passed product relation data and return's the ID.

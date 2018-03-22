@@ -33,7 +33,7 @@ use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperLinkRepository extends AbstractRepository
+class ProductSuperLinkRepository extends AbstractRepository implements ProductSuperLinkRepositoryInterface
 {
 
     /**
