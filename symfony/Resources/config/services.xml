@@ -73,10 +73,10 @@
         <service id="import_product_variant.observer.variant.super.link.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperLinkUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
         </service>
-        <service id="import_product_variant.observer.variant.super.link" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationObserver">
+        <service id="import_product_variant.observer.variant.product.relation" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
         </service>
-        <service id="import_product_variant.observer.variant.super.link.update" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationUpdateObserver">
+        <service id="import_product_variant.observer.variant.product.relation.update" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
         </service>
         <service id="import_product_variant.observer.variant.super.attribute" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeObserver">
