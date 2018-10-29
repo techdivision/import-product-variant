@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Observers\VariantObserver
+ * TechDivision\Import\Product\Variant\Observers\VariantSuperLinkObserver
  *
  * NOTICE OF LICENSE
  *
@@ -26,7 +26,7 @@ use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
 use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface;
 
 /**
- * Oberserver that provides functionality for the product variant replace operation.
+ * Oberserver that provides functionality for the product variant super link replace operation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -34,22 +34,8 @@ use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterfac
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class VariantObserver extends AbstractProductImportObserver
+class VariantSuperLinkObserver extends AbstractProductImportObserver
 {
-
-    /**
-     * The product relation's parent ID.
-     *
-     * @var integer
-     */
-    protected $parentId;
-
-    /**
-     * The product relation's child ID.
-     *
-     * @var integer
-     */
-    protected $childId;
 
     /**
      * The product variant processor instance.
@@ -88,11 +74,10 @@ class VariantObserver extends AbstractProductImportObserver
 
         try {
             // try to load and map the parent ID
-            $this->parentId = $this->mapParentSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
+            $this->parentId = $this->mapSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
         } catch (\Exception $e) {
             throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
         }
-
 
         try {
             // try to load and map the child ID
@@ -102,11 +87,6 @@ class VariantObserver extends AbstractProductImportObserver
         }
 
         try {
-            // prepare and persist the product relation
-            if ($productRelation = $this->initializeProductRelation($this->prepareProductRelationAttributes())) {
-                $this->persistProductRelation($productRelation);
-            }
-
             // prepare and persist the product super link
             if ($productSuperLink = $this->initializeProductSuperLink($this->prepareProductSuperLinkAttributes())) {
                 $this->persistProductSuperLink($productSuperLink);
@@ -116,7 +96,7 @@ class VariantObserver extends AbstractProductImportObserver
             // prepare a more detailed error message
             $message = $this->appendExceptionSuffix(
                 sprintf(
-                    'Product relation with SKUs %s => %s can\'t be created',
+                    'Super link with SKUs %s => %s can\'t be created',
                     $parentSku,
                     $childSku
                 )
@@ -141,23 +121,6 @@ class VariantObserver extends AbstractProductImportObserver
     }
 
     /**
-     * Prepare the product relation attributes that has to be persisted.
-     *
-     * @return array The prepared product relation attributes
-     */
-    protected function prepareProductRelationAttributes()
-    {
-
-        // initialize and return the entity
-        return $this->initializeEntity(
-            array(
-                MemberNames::PARENT_ID => $this->parentId,
-                MemberNames::CHILD_ID  => $this->childId
-            )
-        );
-    }
-
-    /**
      * Prepare the product super link attributes that has to be persisted.
      *
      * @return array The prepared product super link attributes
@@ -175,18 +138,6 @@ class VariantObserver extends AbstractProductImportObserver
     }
 
     /**
-     * Initialize the product relation with the passed attributes and returns an instance.
-     *
-     * @param array $attr The product relation attributes
-     *
-     * @return array|null The initialized product relation, or null if the relation already exsist
-     */
-    protected function initializeProductRelation(array $attr)
-    {
-        return $attr;
-    }
-
-    /**
      * Initialize the product super link with the passed attributes and returns an instance.
      *
      * @param array $attr The product super link attributes
@@ -199,30 +150,6 @@ class VariantObserver extends AbstractProductImportObserver
     }
 
     /**
-     * Map's the passed SKU of the parent product to it's PK.
-     *
-     * @param string $parentSku The SKU of the parent product
-     *
-     * @return integer The primary key used to create relations
-     */
-    protected function mapParentSku($parentSku)
-    {
-        return $this->mapSkuToEntityId($parentSku);
-    }
-
-    /**
-     * Map's the passed SKU of the child product to it's PK.
-     *
-     * @param string $childSku The SKU of the child product
-     *
-     * @return integer The primary key used to create relations
-     */
-    protected function mapChildSku($childSku)
-    {
-        return $this->mapSkuToEntityId($childSku);
-    }
-
-    /**
      * Return the entity ID for the passed SKU.
      *
      * @param string $sku The SKU to return the entity ID for
@@ -230,21 +157,22 @@ class VariantObserver extends AbstractProductImportObserver
      * @return integer The mapped entity ID
      * @throws \Exception Is thrown if the SKU is not mapped yet
      */
-    protected function mapSkuToEntityId($sku)
+    protected function mapSku($sku)
     {
         return $this->getSubject()->mapSkuToEntityId($sku);
     }
 
     /**
-     * Persist's the passed product relation data and return's the ID.
+     * Return the entity ID for the passed child SKU.
      *
-     * @param array $productRelation The product relation data to persist
+     * @param string $sku The SKU to return the entity ID for
      *
-     * @return void
+     * @return integer The mapped entity ID
+     * @throws \Exception Is thrown if the SKU is not mapped yet
      */
-    protected function persistProductRelation($productRelation)
+    protected function mapChildSku($sku)
     {
-        return $this->getProductVariantProcessor()->persistProductRelation($productRelation);
+        return $this->getSubject()->mapSkuToEntityId($sku);
     }
 
     /**

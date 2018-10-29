@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface
+ * TechDivision\Import\Product\Variant\Observers\VariantProductRelationObserver
  *
  * NOTICE OF LICENSE
  *
@@ -18,12 +18,13 @@
  * @link      http://www.techdivision.com
  */
 
-namespace TechDivision\Import\Product\Variant\Repositories;
+namespace TechDivision\Import\Product\Variant\Observers;
 
-use TechDivision\Import\Repositories\RepositoryInterface;
+use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
+use TechDivision\Import\Product\Observers\AbstractProductRelationObserver;
 
 /**
- * Interface for repository implementations to load product relation data.
+ * Oberserver that provides functionality for the variant product relation replace operation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -31,16 +32,26 @@ use TechDivision\Import\Repositories\RepositoryInterface;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-interface ProductRelationRepositoryInterface extends RepositoryInterface
+class VariantProductRelationObserver extends AbstractProductRelationObserver
 {
 
     /**
-     * Load's the product relation with the passed parent/child ID.
+     * Returns the column name with the parent SKU.
      *
-     * @param integer $parentId The entity ID of the product relation's parent product
-     * @param integer $childId  The entity ID of the product relation's child product
-     *
-     * @return array The product relation
+     * @return string The column name with the parent SKU
      */
-    public function findOneByParentIdAndChildId($parentId, $childId);
+    protected function getParentSkuColumnName()
+    {
+        return ColumnKeys::VARIANT_PARENT_SKU;
+    }
+
+    /**
+     * Returns the column name with the child SKU.
+     *
+     * @return string The column name with the child SKU
+     */
+    protected function getChildSkuColumnName()
+    {
+        return ColumnKeys::VARIANT_CHILD_SKU;
+    }
 }
