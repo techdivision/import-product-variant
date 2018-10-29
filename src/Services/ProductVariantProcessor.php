@@ -23,11 +23,11 @@ namespace TechDivision\Import\Product\Variant\Services;
 use TechDivision\Import\Connection\ConnectionInterface;
 use TechDivision\Import\Repositories\EavAttributeRepositoryInterface;
 use TechDivision\Import\Repositories\EavAttributeOptionValueRepositoryInterface;
-use TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface;
+use TechDivision\Import\Product\Actions\ProductRelationActionInterface;
+use TechDivision\Import\Product\Repositories\ProductRelationRepositoryInterface;
 use TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepositoryInterface;
 use TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepositoryInterface;
 use TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepositoryInterface;
-use TechDivision\Import\Product\Variant\Actions\ProductRelationActionInterface;
 use TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface;
 use TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface;
 use TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface;
@@ -54,7 +54,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * The repository to access product relations.
      *
-     * @var \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface
+     * @var \TechDivision\Import\Product\Repositories\ProductRelationRepositoryInterface
      */
     protected $productRelationRepository;
 
@@ -96,7 +96,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * The action for product relation CRUD methods.
      *
-     * @var \TechDivision\Import\Product\Variant\Actions\ProductRelationActionInterface
+     * @var \TechDivision\Import\Product\Actions\ProductRelationActionInterface
      */
     protected $productRelationAction;
 
@@ -127,11 +127,11 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      * @param \TechDivision\Import\Connection\ConnectionInterface                                             $connection                           The connection to use
      * @param \TechDivision\Import\Repositories\EavAttributeOptionValueRepositoryInterface                    $eavAttributeOptionValueRepository    The EAV attribute option value repository to use
      * @param \TechDivision\Import\Repositories\EavAttributeRepositoryInterface                               $eavAttributeRepository               The EAV attribute repository to use
-     * @param \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface            $productRelationRepository            The product relation repository to use
+     * @param \TechDivision\Import\Product\Repositories\ProductRelationRepositoryInterface                    $productRelationRepository            The product relation repository to use
      * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepositoryInterface           $productSuperLinkRepository           The product super link repository to use
      * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepositoryInterface      $productSuperAttributeRepository      The product super attribute repository to use
      * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepositoryInterface $productSuperAttributeLabelRepository The product super attribute label repository to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductRelationActionInterface                     $productRelationAction                The product relation action to use
+     * @param \TechDivision\Import\Product\Actions\ProductRelationActionInterface                             $productRelationAction                The product relation action to use
      * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface                    $productSuperLinkAction               The product super link action to use
      * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface               $productSuperAttributeAction          The product super attribute action to use
      * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface          $productSuperAttributeLabelAction     The product super attribute label action to use
@@ -253,7 +253,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the repository to access product relations.
      *
-     * @param \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface $productRelationRepository The repository instance
+     * @param \TechDivision\Import\Product\Repositories\ProductRelationRepositoryInterface $productRelationRepository The repository instance
      *
      * @return void
      */
@@ -265,7 +265,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the repository to access product relations.
      *
-     * @return \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface The repository instance
+     * @return \TechDivision\Import\Product\Repositories\ProductRelationRepositoryInterface The repository instance
      */
     public function getProductRelationRepository()
     {
@@ -363,7 +363,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the action with the product relation CRUD methods.
      *
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductRelationActionInterface $productRelationAction The action with the product relation CRUD methods
+     * @param \TechDivision\Import\Product\Actions\ProductRelationActionInterface $productRelationAction The action with the product relation CRUD methods
      *
      * @return void
      */
@@ -375,7 +375,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the action with the product relation CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductRelationActionInterface The action instance
+     * @return \TechDivision\Import\Product\Actions\ProductRelationActionInterface The action instance
      */
     public function getProductRelationAction()
     {

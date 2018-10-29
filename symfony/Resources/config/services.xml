@@ -6,10 +6,6 @@
     <services>
 
         <service id="import_product_variant.repository.sql.statement" class="TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository"/>
-        <service id="import_product_variant.repository.product.relation" class="TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository">
-            <argument type="service" id="connection"/>
-            <argument type="service" id="import_product_variant.repository.sql.statement"/>
-        </service>
         <service id="import_product_variant.repository.product.super.attribute" class="TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
@@ -23,10 +19,6 @@
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
         </service>
 
-        <service id="import_product_variant.action.processor.product.relation.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductRelationCreateProcessor">
-            <argument type="service" id="connection"/>
-            <argument type="service" id="import_product_variant.repository.sql.statement"/>
-        </service>
         <service id="import_product_variant.action.processor.product.super.attribute.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeCreateProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
@@ -48,9 +40,6 @@
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
         </service>
 
-        <service id="import_product_variant.action.product.relation" class="TechDivision\Import\Product\Variant\Actions\ProductRelationAction">
-            <argument type="service" id="import_product_variant.action.processor.product.relation.create"/>
-        </service>
         <service id="import_product_variant.action.product.super.attribute" class="TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.create"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.update"/>
@@ -67,27 +56,33 @@
             <argument type="service" id="connection"/>
             <argument type="service" id="import.repository.eav.attribute.option.value"/>
             <argument type="service" id="import.repository.eav.attribute"/>
-            <argument type="service" id="import_product_variant.repository.product.relation"/>
+            <argument type="service" id="import_product.repository.product.relation"/>
             <argument type="service" id="import_product_variant.repository.product.super.link"/>
             <argument type="service" id="import_product_variant.repository.product.super.attribute"/>
             <argument type="service" id="import_product_variant.repository.product.super.attribute.label"/>
-            <argument type="service" id="import_product_variant.action.product.relation"/>
+            <argument type="service" id="import_product.action.product.relation"/>
             <argument type="service" id="import_product_variant.action.product.super.link"/>
             <argument type="service" id="import_product_variant.action.product.super.attribute"/>
             <argument type="service" id="import_product_variant.action.product.super.attribute.label"/>
         </service>
 
         <service id="import_product_variant.observer.product.variant" class="TechDivision\Import\Product\Variant\Observers\ProductVariantObserver"/>
-        <service id="import_product_variant.observer.variant" class="TechDivision\Import\Product\Variant\Observers\VariantObserver">
+        <service id="import_product_variant.observer.variant.super.link" class="TechDivision\Import\Product\Variant\Observers\VariantSuperLinkObserver">
+            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+        <service id="import_product_variant.observer.variant.super.link.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperLinkUpdateObserver">
+            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+        <service id="import_product_variant.observer.variant.super.link" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationObserver">
+            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+        <service id="import_product_variant.observer.variant.super.link.update" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
         </service>
         <service id="import_product_variant.observer.variant.super.attribute" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
         </service>
         <service id="import_product_variant.observer.variant.super.attribute.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeUpdateObserver">
-            <argument type="service" id="import_product_variant.processor.product.variant"/>
-        </service>
-        <service id="import_product_variant.observer.variant.update" class="TechDivision\Import\Product\Variant\Observers\VariantUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
         </service>
 

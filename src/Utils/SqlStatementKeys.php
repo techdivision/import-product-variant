@@ -33,13 +33,6 @@ class SqlStatementKeys extends \TechDivision\Import\Product\Utils\SqlStatementKe
 {
 
     /**
-     * The SQL statement to load an existing product relation with the passed parent/child ID.
-     *
-     * @var string
-     */
-    const PRODUCT_RELATION = 'product_relation';
-
-    /**
      * The SQL statement to load an existing product super link with the passed prodcut/parent ID.
      *
      * @var string
@@ -59,13 +52,6 @@ class SqlStatementKeys extends \TechDivision\Import\Product\Utils\SqlStatementKe
      * @var string
      */
     const PRODUCT_SUPER_ATTRIBUTE_LABEL = 'product_super_attribute_label';
-
-    /**
-     * The SQL statement to create a new product relation.
-     *
-     * @var string
-     */
-    const CREATE_PRODUCT_RELATION = 'create.product_relation';
 
     /**
      * The SQL statement to create a new product super link.

@@ -40,11 +40,6 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
      * @var array
      */
     private $statements = array(
-        SqlStatementKeys::PRODUCT_RELATION =>
-            'SELECT *
-               FROM catalog_product_relation
-              WHERE parent_id = :parent_id
-                AND child_id = :child_id',
         SqlStatementKeys::PRODUCT_SUPER_LINK =>
             'SELECT *
                FROM catalog_product_super_link
@@ -60,13 +55,6 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
                FROM catalog_product_super_attribute_label
               WHERE product_super_attribute_id = :product_super_attribute_id
                 AND store_id = :store_id',
-        SqlStatementKeys::CREATE_PRODUCT_RELATION =>
-            'INSERT
-               INTO catalog_product_relation
-                    (parent_id,
-                     child_id)
-             VALUES (:parent_id,
-                     :child_id)',
         SqlStatementKeys::CREATE_PRODUCT_SUPER_LINK =>
             'INSERT
                INTO catalog_product_super_link

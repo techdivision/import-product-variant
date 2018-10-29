@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Actions\ProductRelationActionTest
+ * TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionTest
  *
  * NOTICE OF LICENSE
  *
@@ -21,7 +21,7 @@
 namespace TechDivision\Import\Product\Variant\Actions;
 
 /**
- * Test class for the product variant action implementation.
+ * Test class for the product super attribute action implementation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -29,7 +29,7 @@ namespace TechDivision\Import\Product\Variant\Actions;
  * @link      https://github.com/techdivision/import-product-media
  * @link      http://www.techdivision.com
  */
-class ProductRelationActionTest extends \PHPUnit_Framework_TestCase
+class ProductSuperAttributeActionTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -50,7 +50,7 @@ class ProductRelationActionTest extends \PHPUnit_Framework_TestCase
                             ->willReturn(null);
 
         // create a mock for the product relation action
-        $mockAction = $this->getMockBuilder('TechDivision\Import\Product\Variant\Actions\ProductRelationAction')
+        $mockAction = $this->getMockBuilder('TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction')
                            ->setMethods(array('getCreateProcessor'))
                            ->getMock();
         $mockAction->expects($this->once())
