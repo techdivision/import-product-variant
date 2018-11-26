@@ -63,10 +63,14 @@ class ProductVariantObserver extends AbstractProductImportObserver
 
             // create an array with the variation labels (attribute code as key)
             $varLabels = array();
-            foreach ($this->explode($configurableVariationLabels, '|') as $variationLabel) {
-                if (strstr($variationLabel, '=')) {
-                    list ($key, $value) = $this->explode($variationLabel, '=');
-                    $varLabels[$key] = $value;
+
+            // explode the variations labels
+            if ($variationLabels = $this->explode($configurableVariationLabels, '|')) {
+                foreach ($variationLabels as $variationLabel) {
+                    if (strstr($variationLabel, '=')) {
+                        list ($key, $value) = $this->explode($variationLabel, '=');
+                        $varLabels[$key] = $value;
+                    }
                 }
             }
 
