@@ -91,7 +91,6 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             if ($productSuperLink = $this->initializeProductSuperLink($this->prepareProductSuperLinkAttributes())) {
                 $this->persistProductSuperLink($productSuperLink);
             }
-
         } catch (\Exception $e) {
             // prepare a more detailed error message
             $message = $this->appendExceptionSuffix(

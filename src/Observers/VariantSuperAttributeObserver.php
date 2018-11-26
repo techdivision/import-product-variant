@@ -130,7 +130,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
             // initialize and save the super attribute label
             $productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($this->prepareProductSuperAttributeLabelAttributes());
             $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
-
         } catch (\Exception $e) {
             // prepare a more detailed error message
             $message = $this->appendExceptionSuffix(
