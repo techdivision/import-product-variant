@@ -20,6 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
+use TechDivision\Import\Product\Utils\RelationTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
@@ -72,16 +73,25 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
     protected function process()
     {
 
+        // load the parent/child SKUs
+        $parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU);
+        $childSku = $this->getValue(ColumnKeys::VARIANT_CHILD_SKU);
+
+        // query whether or not the super link has already been processed
+        if ($this->hasBeenProcessedRelation($parentSku, $childSku, RelationTypes::VARIANT_SUPER_LINK)) {
+            return;
+        }
+
         try {
             // try to load and map the parent ID
-            $this->parentId = $this->mapSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
+            $this->parentId = $this->mapSku($parentSku);
         } catch (\Exception $e) {
             throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
         }
 
         try {
             // try to load and map the child ID
-            $this->childId = $this->mapChildSku($childSku = $this->getValue(ColumnKeys::VARIANT_CHILD_SKU));
+            $this->childId = $this->mapChildSku($childSku);
         } catch (\Exception $e) {
             throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
         }
@@ -91,6 +101,9 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             if ($productSuperLink = $this->initializeProductSuperLink($this->prepareProductSuperLinkAttributes())) {
                 $this->persistProductSuperLink($productSuperLink);
             }
+
+            // mark the super link as processed
+            $this->addProcessedRelation($parentSku, $childSku, RelationTypes::VARIANT_SUPER_LINK);
         } catch (\Exception $e) {
             // prepare a more detailed error message
             $message = $this->appendExceptionSuffix(

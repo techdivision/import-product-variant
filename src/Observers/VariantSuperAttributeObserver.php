@@ -21,6 +21,7 @@
 namespace TechDivision\Import\Product\Variant\Observers;
 
 use TechDivision\Import\Utils\StoreViewCodes;
+use TechDivision\Import\Product\Utils\RelationTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
@@ -99,7 +100,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
         $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
 
         // query whether or not the super attribute has already been processed
-        if ($this->hasBeenProcessedSuperAttribute($parentSku, $attributeCode)) {
+        if ($this->hasBeenProcessedRelation($parentSku, $attributeCode, RelationTypes::VARIANT_SUPER_ATTRIBUTE)) {
             return;
         }
 
@@ -130,7 +131,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
             $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
 
             // mark the super attribute as processed
-            $this->addProcessedSuperAttribute($parentSku, $attributeCode);
+            $this->addProcessedRelation($parentSku, $attributeCode, RelationTypes::VARIANT_SUPER_ATTRIBUTE);
         } catch (\Exception $e) {
             // prepare a more detailed error message
             $message = $this->appendExceptionSuffix(
@@ -257,45 +258,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     protected function mapSkuToEntityId($sku)
     {
         return $this->getSubject()->mapSkuToEntityId($sku);
-    }
-
-    /**
-     * Marks the variant super attribute combination processed.
-     *
-     * @param string $parentSku     The SKU of the parent product
-     * @param string $attributeCode The variant attribute code
-     *
-     * @return void
-     */
-    protected function addProcessedSuperAttribute($parentSku, $attributeCode)
-    {
-        $this->getSubject()->addProcessedSuperAttribute($parentSku, $attributeCode);
-    }
-
-    /**
-     * Query's whether or not the variant super attribute with the passed parent
-     * SKU + attribute code combination has been processed.
-     *
-     * @param string $parentSku     The SKU of the parent product
-     * @param string $attributeCode The variant attribute code
-     *
-     * @return boolean TRUE if the combination has been processed, else FALSE
-     */
-    protected function hasBeenProcessedSuperAttribute($parentSku, $attributeCode)
-    {
-        return $this->getSubject()->hasBeenProcessedSuperAttribute($parentSku, $attributeCode);
-    }
-
-    /**
-     * Return's TRUE if the passed ID is the parent one.
-     *
-     * @param integer $parentId The parent ID to check
-     *
-     * @return boolean TRUE if the passed ID is the parent one
-     */
-    protected function isParentId($parentId)
-    {
-        return $this->getParentId() === $parentId;
     }
 
     /**

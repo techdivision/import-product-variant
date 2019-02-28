@@ -50,13 +50,6 @@ class VariantSubject extends AbstractProductSubject
     protected $skuEntityIdMapping = array();
 
     /**
-     * Array that contains the super attribute => attribute code combinations that has already been processed.
-     *
-     * @var array
-     */
-    protected $processedSuperAttributes = array();
-
-    /**
      * Intializes the previously loaded global data for exactly one variants.
      *
      * @param string $serial The serial of the actual import
@@ -147,46 +140,5 @@ class VariantSubject extends AbstractProductSubject
                 sprintf('Found invalid store code %s', $storeCode)
             )
         );
-    }
-
-    /**
-     * Marks the variant super attribute combination processed.
-     *
-     * @param string $parentSku     The SKU of the parent product
-     * @param string $attributeCode The variant attribute code
-     *
-     * @return void
-     */
-    public function addProcessedSuperAttribute($parentSku, $attributeCode)
-    {
-
-        // query whether or not the array for the attribute codes of the
-        // super attribute has already been processed
-        if (isset($this->processedSuperAttributes[$parentSku])) {
-            $this->processedSuperAttributes[$parentSku][] = $attributeCode;
-        } else {
-            $this->processedSuperAttributes[$parentSku] = array($attributeCode);
-        }
-    }
-
-    /**
-     * Query's whether or not the variant super attribute with the passed parent
-     * SKU + attribute code combination has been processed.
-     *
-     * @param string $parentSku     The SKU of the parent product
-     * @param string $attributeCode The variant attribute code
-     *
-     * @return boolean TRUE if the combination has been processed, else FALSE
-     */
-    public function hasBeenProcessedSuperAttribute($parentSku, $attributeCode)
-    {
-
-        // query whether or not the super attribute has already been registered
-        if (isset($this->processedSuperAttributes[$parentSku])) {
-            return in_array($attributeCode, $this->processedSuperAttributes[$parentSku]);
-        }
-
-        // return FALSE if NOT
-        return false;
     }
 }
