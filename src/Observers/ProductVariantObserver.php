@@ -12,7 +12,7 @@
  * PHP version 5
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
- * @copyright 2016 TechDivision GmbH <info@techdivision.com>
+ * @copyright 2019 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
@@ -25,10 +25,10 @@ use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
 
 /**
- * A SLSB that handles the process to import product bunches.
+ * The observer that exports the data that is necessary to create the variations to a separate CSV file.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
- * @copyright 2016 TechDivision GmbH <info@techdivision.com>
+ * @copyright 2019 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
@@ -65,7 +65,7 @@ class ProductVariantObserver extends AbstractProductImportObserver
             $varLabels = array();
 
             // explode the variations labels
-            if ($variationLabels = $this->explode($configurableVariationLabels, '|')) {
+            if ($variationLabels = $this->explode($configurableVariationLabels)) {
                 foreach ($variationLabels as $variationLabel) {
                     if (strstr($variationLabel, '=')) {
                         list ($key, $value) = $this->explode($variationLabel, '=');
@@ -77,54 +77,60 @@ class ProductVariantObserver extends AbstractProductImportObserver
             // intialize the array for the variations
             $artefacts = array();
 
-            // load the parent SKU from the row
+            // load the parent SKU, the store view code and the attribute set code from the row
             $parentSku = $this->getValue(ColumnKeys::SKU);
-
-            // load the store view code
             $storeViewCode = $this->getValue(ColumnKeys::STORE_VIEW_CODE);
-
-            // load the product's attribute set code
             $attributeSetCode = $this->getValue(ColumnKeys::ATTRIBUTE_SET_CODE);
 
-            // iterate over all variations and import them
+            // iterate over all variations and import them, e. g. the complete value will look like
+            // sku=sku-0-black-55 cm,color=Black,size=55 cm| \
+            //   sku=sku-01-black-xs,color=Black,size=XS| \
+            //   sku=sku-02-blue-xs,color=Blue,size=XS| \
+            //   sku=02-blue-55 cm,color=Blue,size=55 cm
             foreach ($this->explode($configurableVariations, '|') as $variation) {
-                // sku=Configurable Product 48-option 2,configurable_variation=option 2
-                list ($sku, $option) = $this->explode($variation);
+                // explode the SKU and the configurable attribute values, e. g.
+                // sku=sku-0-black-55 cm,color=Black,size=55 cm
+                $explodedVariation = $this->explode($variation);
 
-                // explode the variations child ID as well as option code and value
-                list (, $childSku) = $this->explode($sku, '=');
-                list ($optionCode, $optionValue) = $this->explode($option, '=');
+                // explode the variations child SKU
+                list (, $childSku) = $this->explode(array_shift($explodedVariation), '=');
 
-                // load the apropriate variation label
-                $varLabel = '';
-                if (isset($varLabels[$optionCode])) {
-                    $varLabel = $varLabels[$optionCode];
+                // iterate over the configurable attribute configuration
+                foreach ($explodedVariation as $option) {
+                    // explode the attributes option code and value
+                    list ($optionCode, $optionValue) = $this->explode($option, '=');
+
+                    // load the apropriate variation label
+                    $varLabel = '';
+                    if (isset($varLabels[$optionCode])) {
+                        $varLabel = $varLabels[$optionCode];
+                    }
+
+                    // initialize the product variation itself
+                    $variation = $this->newArtefact(
+                        array(
+                            ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
+                            ColumnKeys::ATTRIBUTE_SET_CODE      => $attributeSetCode,
+                            ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
+                            ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
+                            ColumnKeys::VARIANT_ATTRIBUTE_CODE  => $optionCode,
+                            ColumnKeys::VARIANT_OPTION_VALUE    => $optionValue,
+                            ColumnKeys::VARIANT_VARIATION_LABEL => $varLabel
+                        ),
+                        array(
+                            ColumnKeys::STORE_VIEW_CODE         => ColumnKeys::STORE_VIEW_CODE,
+                            ColumnKeys::ATTRIBUTE_SET_CODE      => ColumnKeys::ATTRIBUTE_SET_CODE,
+                            ColumnKeys::VARIANT_PARENT_SKU      => ColumnKeys::SKU,
+                            ColumnKeys::VARIANT_CHILD_SKU       => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                            ColumnKeys::VARIANT_ATTRIBUTE_CODE  => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                            ColumnKeys::VARIANT_OPTION_VALUE    => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                            ColumnKeys::VARIANT_VARIATION_LABEL => ColumnKeys::CONFIGURABLE_VARIATION_LABELS
+                        )
+                    );
+
+                    // append the product variation
+                    $artefacts[] = $variation;
                 }
-
-                // initialize the product variation itself
-                $variation = $this->newArtefact(
-                    array(
-                        ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
-                        ColumnKeys::ATTRIBUTE_SET_CODE      => $attributeSetCode,
-                        ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
-                        ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
-                        ColumnKeys::VARIANT_ATTRIBUTE_CODE  => $optionCode,
-                        ColumnKeys::VARIANT_OPTION_VALUE    => $optionValue,
-                        ColumnKeys::VARIANT_VARIATION_LABEL => $varLabel
-                    ),
-                    array(
-                        ColumnKeys::STORE_VIEW_CODE         => ColumnKeys::STORE_VIEW_CODE,
-                        ColumnKeys::ATTRIBUTE_SET_CODE      => ColumnKeys::ATTRIBUTE_SET_CODE,
-                        ColumnKeys::VARIANT_PARENT_SKU      => ColumnKeys::SKU,
-                        ColumnKeys::VARIANT_CHILD_SKU       => ColumnKeys::CONFIGURABLE_VARIATIONS,
-                        ColumnKeys::VARIANT_ATTRIBUTE_CODE  => ColumnKeys::CONFIGURABLE_VARIATIONS,
-                        ColumnKeys::VARIANT_OPTION_VALUE    => ColumnKeys::CONFIGURABLE_VARIATIONS,
-                        ColumnKeys::VARIANT_VARIATION_LABEL => ColumnKeys::CONFIGURABLE_VARIATION_LABELS
-                    )
-                );
-
-                // append the product variation
-                $artefacts[] = $variation;
             }
 
             // append the variations to the subject

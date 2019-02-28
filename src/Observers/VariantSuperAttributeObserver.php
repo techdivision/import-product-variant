@@ -94,11 +94,12 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     protected function process()
     {
 
-        // load parent/child IDs
-        $parentId = $this->mapParentSku($parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU));
+        // extract the child SKU and attribute code from the row
+        $parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU);
+        $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
 
-        // query whether or not, the parent ID have changed
-        if ($this->isParentId($parentId)) {
+        // query whether or not the super attribute has already been processed
+        if ($this->hasBeenProcessedSuperAttribute($parentSku, $attributeCode)) {
             return;
         }
 
@@ -106,10 +107,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
         $this->prepareStoreViewCode($this->getRow());
 
         // preserve the parent ID
-        $this->setParentId($parentId);
-
-        // extract the option value and attribute code from the row
-        $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
+        $this->setParentId($this->mapParentSku($parentSku));
 
         // load the store and set the store ID
         $store = $this->getStoreByStoreCode($this->getStoreViewCode(StoreViewCodes::ADMIN));
@@ -130,6 +128,9 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
             // initialize and save the super attribute label
             $productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($this->prepareProductSuperAttributeLabelAttributes());
             $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
+
+            // mark the super attribute as processed
+            $this->addProcessedSuperAttribute($parentSku, $attributeCode);
         } catch (\Exception $e) {
             // prepare a more detailed error message
             $message = $this->appendExceptionSuffix(
@@ -256,6 +257,33 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     protected function mapSkuToEntityId($sku)
     {
         return $this->getSubject()->mapSkuToEntityId($sku);
+    }
+
+    /**
+     * Marks the variant super attribute combination processed.
+     *
+     * @param string $parentSku     The SKU of the parent product
+     * @param string $attributeCode The variant attribute code
+     *
+     * @return void
+     */
+    protected function addProcessedSuperAttribute($parentSku, $attributeCode)
+    {
+        $this->getSubject()->addProcessedSuperAttribute($parentSku, $attributeCode);
+    }
+
+    /**
+     * Query's whether or not the variant super attribute with the passed parent
+     * SKU + attribute code combination has been processed.
+     *
+     * @param string $parentSku     The SKU of the parent product
+     * @param string $attributeCode The variant attribute code
+     *
+     * @return boolean TRUE if the combination has been processed, else FALSE
+     */
+    protected function hasBeenProcessedSuperAttribute($parentSku, $attributeCode)
+    {
+        return $this->getSubject()->hasBeenProcessedSuperAttribute($parentSku, $attributeCode);
     }
 
     /**
