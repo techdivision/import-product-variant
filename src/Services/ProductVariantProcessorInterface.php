@@ -73,21 +73,21 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
     /**
      * Return's the action with the product super attribute CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperAttributeAction();
 
     /**
      * Return's the action with the product super attribute label CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperAttributeLabelAction();
 
     /**
      * Return's the action with the product super link CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperLinkAction();
 

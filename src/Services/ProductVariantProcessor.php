@@ -20,17 +20,14 @@
 
 namespace TechDivision\Import\Product\Variant\Services;
 
+use TechDivision\Import\Actions\ActionInterface;
 use TechDivision\Import\Connection\ConnectionInterface;
 use TechDivision\Import\Repositories\EavAttributeRepositoryInterface;
 use TechDivision\Import\Repositories\EavAttributeOptionValueRepositoryInterface;
-use TechDivision\Import\Product\Actions\ProductRelationActionInterface;
 use TechDivision\Import\Product\Repositories\ProductRelationRepositoryInterface;
 use TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepositoryInterface;
 use TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepositoryInterface;
 use TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepositoryInterface;
-use TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface;
-use TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface;
-use TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface;
 
 /**
  * The product variant processor implementation.
@@ -96,28 +93,28 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * The action for product relation CRUD methods.
      *
-     * @var \TechDivision\Import\Product\Actions\ProductRelationActionInterface
+     * @var \TechDivision\Import\Actions\ActionInterface
      */
     protected $productRelationAction;
 
     /**
      * The action for product super attribute CRUD methods.
      *
-     * @var \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface
+     * @var \TechDivision\Import\Actions\ActionInterface
      */
     protected $productSuperAttributeAction;
 
     /**
      * The action for product super attribute label CRUD methods.
      *
-     * @var \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface
+     * @var \TechDivision\Import\Actions\ActionInterface
      */
     protected $productSuperAttributeLabelAction;
 
     /**
      * The action for product super link CRUD methods.
      *
-     * @var \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface
+     * @var \TechDivision\Import\Actions\ActionInterface
      */
     protected $productSuperLinkAction;
 
@@ -131,10 +128,10 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperLinkRepositoryInterface           $productSuperLinkRepository           The product super link repository to use
      * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepositoryInterface      $productSuperAttributeRepository      The product super attribute repository to use
      * @param \TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeLabelRepositoryInterface $productSuperAttributeLabelRepository The product super attribute label repository to use
-     * @param \TechDivision\Import\Product\Actions\ProductRelationActionInterface                             $productRelationAction                The product relation action to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface                    $productSuperLinkAction               The product super link action to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface               $productSuperAttributeAction          The product super attribute action to use
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface          $productSuperAttributeLabelAction     The product super attribute label action to use
+     * @param \TechDivision\Import\Actions\ActionInterface                                                    $productRelationAction                The product relation action to use
+     * @param \TechDivision\Import\Actions\ActionInterface                                                    $productSuperLinkAction               The product super link action to use
+     * @param \TechDivision\Import\Actions\ActionInterface                                                    $productSuperAttributeAction          The product super attribute action to use
+     * @param \TechDivision\Import\Actions\ActionInterface                                                    $productSuperAttributeLabelAction     The product super attribute label action to use
      */
     public function __construct(
         ConnectionInterface $connection,
@@ -144,10 +141,10 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
         ProductSuperLinkRepositoryInterface $productSuperLinkRepository,
         ProductSuperAttributeRepositoryInterface $productSuperAttributeRepository,
         ProductSuperAttributeLabelRepositoryInterface $productSuperAttributeLabelRepository,
-        ProductRelationActionInterface $productRelationAction,
-        ProductSuperLinkActionInterface $productSuperLinkAction,
-        ProductSuperAttributeActionInterface $productSuperAttributeAction,
-        ProductSuperAttributeLabelActionInterface $productSuperAttributeLabelAction
+        ActionInterface $productRelationAction,
+        ActionInterface $productSuperLinkAction,
+        ActionInterface $productSuperAttributeAction,
+        ActionInterface $productSuperAttributeLabelAction
     ) {
         $this->setConnection($connection);
         $this->setEavAttributeOptionValueRepository($eavAttributeOptionValueRepository);
@@ -363,11 +360,11 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the action with the product relation CRUD methods.
      *
-     * @param \TechDivision\Import\Product\Actions\ProductRelationActionInterface $productRelationAction The action with the product relation CRUD methods
+     * @param \TechDivision\Import\Actions\ActionInterface $productRelationAction The action with the product relation CRUD methods
      *
      * @return void
      */
-    public function setProductRelationAction(ProductRelationActionInterface $productRelationAction)
+    public function setProductRelationAction(ActionInterface $productRelationAction)
     {
         $this->productRelationAction = $productRelationAction;
     }
@@ -375,7 +372,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the action with the product relation CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Actions\ProductRelationActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductRelationAction()
     {
@@ -385,11 +382,11 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the action with the product super attribute CRUD methods.
      *
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface $productSuperAttributeAction The action with the product super attribute CRUD methods
+     * @param \TechDivision\Import\Actions\ActionInterface $productSuperAttributeAction The action with the product super attribute CRUD methods
      *
      * @return void
      */
-    public function setProductSuperAttributeAction(ProductSuperAttributeActionInterface $productSuperAttributeAction)
+    public function setProductSuperAttributeAction(ActionInterface $productSuperAttributeAction)
     {
         $this->productSuperAttributeAction = $productSuperAttributeAction;
     }
@@ -397,7 +394,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the action with the product super attribute CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperAttributeAction()
     {
@@ -407,11 +404,11 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the action with the product super attribute label CRUD methods.
      *
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface $productSuperAttributeLabelAction The action with the product super attribute label CRUD methods
+     * @param \TechDivision\Import\Actions\ActionInterface $productSuperAttributeLabelAction The action with the product super attribute label CRUD methods
      *
      * @return void
      */
-    public function setProductSuperAttributeLabelAction(ProductSuperAttributeLabelActionInterface $productSuperAttributeLabelAction)
+    public function setProductSuperAttributeLabelAction(ActionInterface $productSuperAttributeLabelAction)
     {
         $this->productSuperAttributeLabelAction = $productSuperAttributeLabelAction;
     }
@@ -419,7 +416,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the action with the product super attribute label CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperAttributeLabelAction()
     {
@@ -429,11 +426,11 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Set's the action with the product super link CRUD methods.
      *
-     * @param \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface $productSuperLinkAction The action with the product super link CRUD methods
+     * @param \TechDivision\Import\Actions\ActionInterface $productSuperLinkAction The action with the product super link CRUD methods
      *
      * @return void
      */
-    public function setProductSuperLinkAction(ProductSuperLinkActionInterface $productSuperLinkAction)
+    public function setProductSuperLinkAction(ActionInterface $productSuperLinkAction)
     {
         $this->productSuperLinkAction = $productSuperLinkAction;
     }
@@ -441,7 +438,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Return's the action with the product super link CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperLinkAction()
     {
