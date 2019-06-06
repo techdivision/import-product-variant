@@ -66,7 +66,7 @@ class VariantSubject extends AbstractProductSubject
         $registryProcessor = $this->getRegistryProcessor();
 
         // load the status of the actual import process
-        $status = $registryProcessor->getAttribute($serial);
+        $status = $registryProcessor->getAttribute(RegistryKeys::STATUS);
 
         // load the attribute set we've prepared intially
         $this->skuEntityIdMapping = $status[RegistryKeys::SKU_ENTITY_ID_MAPPING];
