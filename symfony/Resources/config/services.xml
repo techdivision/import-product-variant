@@ -3,6 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+        <parameter key="import_product_variant.param.sku.column.name" type="constant">TechDivision\Import\Product\Variant\Utils\ColumnKeys::VARIANT_CHILD_SKU</parameter>
+    </parameters>
+
     <services>
 
         <service id="import_product_variant.repository.sql.statement" class="TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository"/>
@@ -84,6 +88,49 @@
         </service>
         <service id="import_product_variant.observer.variant.super.attribute.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+        <service id="import_product_variant.observer.sku.entity.id.mapping" class="TechDivision\Import\Product\Observers\GenericSkuEntityIdMappingObserver">
+            <argument type="service" id="import_product.processor.product.bunch"/>
+            <argument type="string">%import_product_variant.param.sku.column.name%</argument>
+        </service>
+
+        <!--
+         | The DI configuration for the composite observers of the replace operation.
+         |-->
+        <service id="import_product_variant.observer.composite.replace" class="TechDivision\Import\Observers\GenericCompositeObserver">
+            <call method="addObserver">
+                <argument id="import.observer.attribute.set" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.link" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.attribute" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.product.relation" type="service"/>
+            </call>
+        </service>
+
+        <!--
+         | The DI configuration for the composite observers of the add-update operation.
+         |-->
+        <service id="import_product_variant.observer.composite.add_update" class="TechDivision\Import\Observers\GenericCompositeObserver">
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.sku.entity.id.mapping" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import.observer.attribute.set" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.link.update" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.attribute.update" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.product.relation.update" type="service"/>
+            </call>
         </service>
 
         <service id="import_product_variant.subject.variant" class="TechDivision\Import\Product\Variant\Subjects\VariantSubject" shared="false">
