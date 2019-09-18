@@ -42,29 +42,29 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
     private $statements = array(
         SqlStatementKeys::PRODUCT_SUPER_LINK =>
             'SELECT *
-               FROM catalog_product_super_link
+               FROM ${table:catalog_product_super_link}
               WHERE product_id = :product_id
                 AND parent_id = :parent_id',
         SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE =>
             'SELECT *
-               FROM catalog_product_super_attribute
+               FROM ${table:catalog_product_super_attribute}
               WHERE product_id = :product_id
                 AND attribute_id = :attribute_id',
         SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'SELECT *
-               FROM catalog_product_super_attribute_label
+               FROM ${table:catalog_product_super_attribute_label}
               WHERE product_super_attribute_id = :product_super_attribute_id
                 AND store_id = :store_id',
         SqlStatementKeys::CREATE_PRODUCT_SUPER_LINK =>
             'INSERT
-               INTO catalog_product_super_link
+               INTO ${table:catalog_product_super_link}
                     (product_id,
                      parent_id)
              VALUES (:product_id,
                      :parent_id)',
         SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE =>
             'INSERT
-               INTO catalog_product_super_attribute
+               INTO ${table:catalog_product_super_attribute}
                     (product_id,
                      attribute_id,
                      position)
@@ -72,14 +72,14 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
                      :attribute_id,
                      :position)',
         SqlStatementKeys::UPDATE_PRODUCT_SUPER_ATTRIBUTE =>
-            'UPDATE catalog_product_super_attribute
+            'UPDATE ${table:catalog_product_super_attribute}
                 SET product_id = :product_id,
                     attribute_id = :attribute_id,
                     position = :position
               WHERE product_super_attribute_id = :product_super_attribute_id',
         SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'INSERT
-                INTO catalog_product_super_attribute_label
+                INTO ${table:catalog_product_super_attribute_label}
                      (product_super_attribute_id,
                       store_id,
                       use_default,
@@ -89,7 +89,7 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
                       :use_default,
                       :value)',
         SqlStatementKeys::UPDATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
-            'UPDATE catalog_product_super_attribute_label
+            'UPDATE ${table:catalog_product_super_attribute_label}
                 SET product_super_attribute_id = :product_super_attribute_id,
                     store_id = :store_id,
                     use_default = :use_default,
@@ -98,17 +98,17 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
     );
 
     /**
-     * Initialize the the SQL statements.
+     * Initializes the SQL statement repository with the primary key and table prefix utility.
+     *
+     * @param \IteratorAggregate<\TechDivision\Import\Utils\SqlCompilerInterface> $compilers The array with the compiler instances
      */
-    public function __construct()
+    public function __construct(\IteratorAggregate $compilers)
     {
 
-        // call the parent constructor
-        parent::__construct();
+        // pass primary key + table prefix utility to parent instance
+        parent::__construct($compilers);
 
-        // merge the class statements
-        foreach ($this->statements as $key => $statement) {
-            $this->preparedStatements[$key] = $statement;
-        }
+        // compile the SQL statements
+        $this->compile($this->statements);
     }
 }

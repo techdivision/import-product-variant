@@ -9,7 +9,9 @@
 
     <services>
 
-        <service id="import_product_variant.repository.sql.statement" class="TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository"/>
+        <service id="import_product_variant.repository.sql.statement" class="TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository">
+            <argument type="service" id="import.util.sql.compilers"/>
+        </service>
         <service id="import_product_variant.repository.product.super.attribute" class="TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
