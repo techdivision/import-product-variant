@@ -49,6 +49,8 @@
         <service id="import_product_variant.action.product.super.attribute" class="TechDivision\Import\Actions\GenericIdentifierAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.create"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.update"/>
+            <argument type="service" id="import_product_variant.action.processor.product.super.attribute.delete" on-invalid="ignore"/>
+            <argument type="constant">TechDivision\Import\Product\Variant\Utils\MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID</argument>
         </service>
         <service id="import_product_variant.action.product.super.attribute.label" class="TechDivision\Import\Actions\GenericAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.label.create"/>

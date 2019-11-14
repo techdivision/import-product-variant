@@ -20,6 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
+use TechDivision\Import\Product\Variant\Utils\TableNames;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 
 /**
@@ -50,7 +51,7 @@ class VariantSuperAttributeUpdateObserver extends VariantSuperAttributeObserver
 
         // query whether or not, the product super attribute already exists
         if ($entity = $this->loadProductSuperAttribute($productId, $attributeId)) {
-            return $this->mergeEntity($entity, $attr);
+            return $this->mergeProductSuperAttribute($entity, $attr);
         }
 
         // simply return the attributes
@@ -73,11 +74,30 @@ class VariantSuperAttributeUpdateObserver extends VariantSuperAttributeObserver
 
         // query whether or not, the product super attribute label already exists
         if ($entity = $this->loadProductSuperAttributeLabel($productSuperAttributeId, $storeId)) {
-            return $this->mergeEntity($entity, $attr);
+            return $this->mergeEntity($entity, $attr, TableNames::CATALOG_PRODUCT_SUPER_ATTRIBUTE_LABEL);
         }
 
         // simply return the attributes
         return $attr;
+    }
+
+    /**
+     * Merge's and return's the product super attribute entity with the passed attributes and set's the
+     * status to 'update'.
+     *
+     * @param array $entity The entity to merge the attributes into
+     * @param array $attr   The attributes to be merged
+     *
+     * @return array The merged entity
+     */
+    protected function mergeProductSuperAttribute(array $entity, array $attr)
+    {
+
+        // temporary persist the super attribute ID
+        $this->setProductSuperAttributeId($entity[MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID]);
+
+        // merge and return the entity
+        return $this->mergeEntity($entity, $attr, TableNames::CATALOG_PRODUCT_SUPER_ATTRIBUTE);
     }
 
     /**

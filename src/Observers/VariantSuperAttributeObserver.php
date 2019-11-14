@@ -21,6 +21,7 @@
 namespace TechDivision\Import\Product\Variant\Observers;
 
 use TechDivision\Import\Utils\StoreViewCodes;
+use TechDivision\Import\Observers\StateDetectorInterface;
 use TechDivision\Import\Product\Utils\RelationTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
@@ -72,9 +73,14 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      *
      * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
      */
-    public function __construct(ProductVariantProcessorInterface $productVariantProcessor)
+    public function __construct(ProductVariantProcessorInterface $productVariantProcessor, StateDetectorInterface $stateDetector)
     {
+
+        // initialize the product variant processor instance
         $this->productVariantProcessor = $productVariantProcessor;
+
+        // pass the state detector to the parent method
+        parent::__construct($stateDetector);
     }
 
     /**
@@ -110,25 +116,23 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
         // preserve the parent ID
         $this->setParentId($this->mapParentSku($parentSku));
 
-        // load the store and set the store ID
-        $store = $this->getStoreByStoreCode($this->getStoreViewCode(StoreViewCodes::ADMIN));
-        $this->storeId = $store[MemberNames::STORE_ID];
-
         try {
             // load the EAV attribute with the found attribute code
-            $this->eavAttribute = $this->getEavAttributeByAttributeCode($attributeCode);
+            $this->setEavAttribute($this->getEavAttributeByAttributeCode($attributeCode));
         } catch (\Exception $e) {
             throw $this->wrapException(array(ColumnKeys::VARIANT_ATTRIBUTE_CODE), $e);
         }
 
         try {
             // initialize and save the super attribute
-            $productSuperAttribute = $this->initializeProductSuperAttribute($this->prepareProducSuperAttributeAttributes());
-            $this->productSuperAttributeId = $this->persistProductSuperAttribute($productSuperAttribute);
+            if ($this->hasChanges($productSuperAttribute = $this->initializeProductSuperAttribute($this->prepareProducSuperAttributeAttributes()))) {
+                $this->persistProductSuperAttribute($productSuperAttribute);
+            }
 
             // initialize and save the super attribute label
-            $productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($this->prepareProductSuperAttributeLabelAttributes());
-            $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
+            if ($this->hasChanges($productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($this->prepareProductSuperAttributeLabelAttributes()))) {
+                $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
+            }
 
             // mark the super attribute as processed
             $this->addProcessedRelation($parentSku, $attributeCode, RelationTypes::VARIANT_SUPER_ATTRIBUTE);
@@ -172,7 +176,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
         $parentId = $this->getParentId();
 
         // load the attribute ID
-        $attributeId = $this->eavAttribute[MemberNames::ATTRIBUTE_ID];
+        $attributeId = $this->getAttributeId();
 
         // initialize the attributes and return them
         return $this->initializeEntity(
@@ -197,14 +201,14 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
 
         // query whether or not we've to create super attribute labels
         if (empty($variationLabel)) {
-            $variationLabel = $this->eavAttribute[MemberNames::FRONTENT_LABEL];
+            $variationLabel = $this->getFrontendLabel();
         }
 
         // initialize the attributes and return them
         return $this->initializeEntity(
             array(
-                MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID => $this->productSuperAttributeId,
-                MemberNames::STORE_ID                   => $this->storeId,
+                MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID => $this->getProductSuperAttributeId(),
+                MemberNames::STORE_ID                   => $this->getRowStoreId(StoreViewCodes::ADMIN),
                 MemberNames::USE_DEFAULT                => 0,
                 MemberNames::VALUE                      => $variationLabel
             )
@@ -233,6 +237,68 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     protected function initializeProductSuperAttributeLabel(array $attr)
     {
         return $attr;
+    }
+
+    /**
+     * Set's the actual EAV attribute.
+     *
+     * @param array $eavAttribute The actual EAV attribute
+     */
+    protected function setEavAttribute(array $eavAttribute)
+    {
+        $this->eavAttribute = $eavAttribute;
+    }
+
+    /**
+     * Return's the actual EAV attribute.
+     *
+     * @return array The actual EAV attribute
+     */
+    protected function getEavAttribute()
+    {
+        return $this->eavAttribute;
+    }
+
+    /**
+     * Return's the frontend label from the actual EAV attribute.
+     *
+     * @return string The frontend label
+     */
+    protected function getFrontendLabel()
+    {
+        return $this->eavAttribute[MemberNames::FRONTENT_LABEL];
+    }
+
+    /**
+     * Return's the attribute ID from the actual EAV attribute.
+     *
+     * @return integer The attribute ID
+     */
+    protected function getAttributeId()
+    {
+        return $this->eavAttribute[MemberNames::ATTRIBUTE_ID];
+    }
+
+    /**
+     * Set's the actual product super attribute ID.
+     *
+     * @param integer $productSuperAttributeId The product super attribute ID
+     *
+     * @return void
+     */
+    protected function setProductSuperAttributeId($productSuperAttributeId)
+    {
+        $this->productSuperAttributeId = $productSuperAttributeId;
+    }
+
+    /**
+     * Return's the product super attribute ID.
+     *
+     * @return integer The product super attribute ID
+     */
+    protected function getProductSuperAttributeId()
+    {
+        return $this->productSuperAttributeId;
     }
 
     /**
@@ -326,7 +392,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      */
     protected function persistProductSuperAttribute($productSuperAttribute)
     {
-        return $this->getProductVariantProcessor()->persistProductSuperAttribute($productSuperAttribute);
+        $this->setProductSuperAttributeId($this->getProductVariantProcessor()->persistProductSuperAttribute($productSuperAttribute));
     }
 
     /**
