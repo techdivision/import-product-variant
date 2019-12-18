@@ -74,7 +74,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
      * @param \TechDivision\Import\Observers\StateDetectorInterface                          $stateDetector           The state detector instance
      */
-    public function __construct(ProductVariantProcessorInterface $productVariantProcessor, StateDetectorInterface $stateDetector)
+    public function __construct(ProductVariantProcessorInterface $productVariantProcessor, StateDetectorInterface $stateDetector = null)
     {
 
         // initialize the product variant processor instance
