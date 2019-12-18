@@ -72,6 +72,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      * Initialize the observer with the passed product variant processor instance.
      *
      * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
+     * @param \TechDivision\Import\Observers\StateDetectorInterface                          $stateDetector           The state detector instance
      */
     public function __construct(ProductVariantProcessorInterface $productVariantProcessor, StateDetectorInterface $stateDetector)
     {
@@ -243,6 +244,8 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
      * Set's the actual EAV attribute.
      *
      * @param array $eavAttribute The actual EAV attribute
+     *
+     * @return void
      */
     protected function setEavAttribute(array $eavAttribute)
     {
