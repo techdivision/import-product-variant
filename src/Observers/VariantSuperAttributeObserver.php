@@ -176,15 +176,16 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
         // load the parent ID
         $parentId = $this->getParentId();
 
-        // load the attribute ID
+        // load the attribute ID and position
         $attributeId = $this->getAttributeId();
+        $position = $this->getValue(ColumnKeys::VARIANT_VARIATION_POSITION, 0);
 
         // initialize the attributes and return them
         return $this->initializeEntity(
             array(
                 MemberNames::PRODUCT_ID   => $parentId,
                 MemberNames::ATTRIBUTE_ID => $attributeId,
-                MemberNames::POSITION     => 0
+                MemberNames::POSITION     => $position
             )
         );
     }

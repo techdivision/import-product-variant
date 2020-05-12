@@ -74,6 +74,22 @@ class ProductVariantObserver extends AbstractProductImportObserver
                 }
             }
 
+            // load the variation positions, if available
+            $configurableVariationsPosition = $this->getValue(ColumnKeys::CONFIGURABLE_VARIATIONS_POSITION);
+
+            // create an array with the variation labels (attribute code as key)
+            $varPositions = array();
+
+            // explode the variations labels
+            if ($variationPositions = $this->explode($configurableVariationsPosition)) {
+                foreach ($variationPositions as $variationPosition) {
+                    if (strstr($variationPosition, '=')) {
+                        list ($key, $value) = $this->explode($variationPosition, '=');
+                        $varPositions[$key] = $value;
+                    }
+                }
+            }
+
             // intialize the array for the variations
             $artefacts = array();
 
@@ -106,25 +122,33 @@ class ProductVariantObserver extends AbstractProductImportObserver
                         $varLabel = $varLabels[$optionCode];
                     }
 
+                    // load the apropriate variation position
+                    $varPosition = 0;
+                    if (isset($varPositions[$optionCode])) {
+                        $varPosition = $varPositions[$optionCode];
+                    }
+
                     // initialize the product variation itself
                     $variation = $this->newArtefact(
                         array(
-                            ColumnKeys::STORE_VIEW_CODE         => $storeViewCode,
-                            ColumnKeys::ATTRIBUTE_SET_CODE      => $attributeSetCode,
-                            ColumnKeys::VARIANT_PARENT_SKU      => $parentSku,
-                            ColumnKeys::VARIANT_CHILD_SKU       => $childSku,
-                            ColumnKeys::VARIANT_ATTRIBUTE_CODE  => $optionCode,
-                            ColumnKeys::VARIANT_OPTION_VALUE    => $optionValue,
-                            ColumnKeys::VARIANT_VARIATION_LABEL => $varLabel
+                            ColumnKeys::STORE_VIEW_CODE            => $storeViewCode,
+                            ColumnKeys::ATTRIBUTE_SET_CODE         => $attributeSetCode,
+                            ColumnKeys::VARIANT_PARENT_SKU         => $parentSku,
+                            ColumnKeys::VARIANT_CHILD_SKU          => $childSku,
+                            ColumnKeys::VARIANT_ATTRIBUTE_CODE     => $optionCode,
+                            ColumnKeys::VARIANT_OPTION_VALUE       => $optionValue,
+                            ColumnKeys::VARIANT_VARIATION_LABEL    => $varLabel,
+                            ColumnKeys::VARIANT_VARIATION_POSITION => $varPosition
                         ),
                         array(
-                            ColumnKeys::STORE_VIEW_CODE         => ColumnKeys::STORE_VIEW_CODE,
-                            ColumnKeys::ATTRIBUTE_SET_CODE      => ColumnKeys::ATTRIBUTE_SET_CODE,
-                            ColumnKeys::VARIANT_PARENT_SKU      => ColumnKeys::SKU,
-                            ColumnKeys::VARIANT_CHILD_SKU       => ColumnKeys::CONFIGURABLE_VARIATIONS,
-                            ColumnKeys::VARIANT_ATTRIBUTE_CODE  => ColumnKeys::CONFIGURABLE_VARIATIONS,
-                            ColumnKeys::VARIANT_OPTION_VALUE    => ColumnKeys::CONFIGURABLE_VARIATIONS,
-                            ColumnKeys::VARIANT_VARIATION_LABEL => ColumnKeys::CONFIGURABLE_VARIATION_LABELS
+                            ColumnKeys::STORE_VIEW_CODE            => ColumnKeys::STORE_VIEW_CODE,
+                            ColumnKeys::ATTRIBUTE_SET_CODE         => ColumnKeys::ATTRIBUTE_SET_CODE,
+                            ColumnKeys::VARIANT_PARENT_SKU         => ColumnKeys::SKU,
+                            ColumnKeys::VARIANT_CHILD_SKU          => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                            ColumnKeys::VARIANT_ATTRIBUTE_CODE     => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                            ColumnKeys::VARIANT_OPTION_VALUE       => ColumnKeys::CONFIGURABLE_VARIATIONS,
+                            ColumnKeys::VARIANT_VARIATION_LABEL    => ColumnKeys::CONFIGURABLE_VARIATION_LABELS,
+                            ColumnKeys::VARIANT_VARIATION_POSITION => ColumnKeys::CONFIGURABLE_VARIATIONS_POSITION
                         )
                     );
 
