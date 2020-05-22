@@ -12,7 +12,7 @@
  * PHP version 5
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
- * @copyright 2016 TechDivision GmbH <info@techdivision.com>
+ * @copyright 2020 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
@@ -21,23 +21,27 @@
 namespace TechDivision\Import\Product\Variant\Observers;
 
 use TechDivision\Import\Utils\StoreViewCodes;
+use TechDivision\Import\Utils\BackendTypeKeys;
 use TechDivision\Import\Observers\StateDetectorInterface;
+use TechDivision\Import\Observers\AttributeLoaderInterface;
 use TechDivision\Import\Product\Utils\RelationTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
-use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
+use TechDivision\Import\Product\Variant\Utils\EntityTypeCodes;
 use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface;
+use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
+use TechDivision\Import\Observers\DynamicAttributeObserverInterface;
 
 /**
  * Oberserver that provides functionality for the product variant super attributes replace operation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
- * @copyright 2016 TechDivision GmbH <info@techdivision.com>
+ * @copyright 2020 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class VariantSuperAttributeObserver extends AbstractProductImportObserver
+class VariantSuperAttributeObserver extends AbstractProductImportObserver implements DynamicAttributeObserverInterface
 {
 
     /**
@@ -69,15 +73,51 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     protected $productVariantProcessor;
 
     /**
+     * The attribute loader instance.
+     *
+     * @var \TechDivision\Import\Observers\AttributeLoaderInterface
+     */
+    protected $attributeLoader;
+
+    /**
+     * Initialize the "dymanmic" columns.
+     *
+     * @var array
+     */
+    protected $columns = array(
+        EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE => array(
+            MemberNames::POSITION    => array(ColumnKeys::VARIANT_VARIATION_POSITION, BackendTypeKeys::BACKEND_TYPE_INT)
+        ),
+        EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE_LABEL => array(
+            MemberNames::VALUE       => array(ColumnKeys::VARIANT_VARIATION_LABEL, BackendTypeKeys::BACKEND_TYPE_VARCHAR),
+            MemberNames::USE_DEFAULT => array(ColumnKeys::VARIANT_VARIATION_USE_DEFAULT, BackendTypeKeys::BACKEND_TYPE_INT)
+        )
+    );
+
+    /**
+     * Array with virtual column name mappings (this is a temporary
+     * solution till techdivision/import#179 as been implemented).
+     *
+     * @var array
+     * @todo https://github.com/techdivision/import/issues/179
+     */
+    protected $virtualMapping = array(ColumnKeys::POSITION => ColumnKeys::VARIANT_VARIATION_POSITION);
+
+    /**
      * Initialize the observer with the passed product variant processor instance.
      *
      * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
-     * @param \TechDivision\Import\Observers\StateDetectorInterface                          $stateDetector           The state detector instance
+     * @param \TechDivision\Import\Observers\AttributeLoaderInterface|null                   $attributeLoader         The attribute loader instance
+     * @param \TechDivision\Import\Observers\StateDetectorInterface|null                     $stateDetector           The state detector instance
      */
-    public function __construct(ProductVariantProcessorInterface $productVariantProcessor, StateDetectorInterface $stateDetector = null)
-    {
+    public function __construct(
+        ProductVariantProcessorInterface $productVariantProcessor,
+        AttributeLoaderInterface $attributeLoader = null,
+        StateDetectorInterface $stateDetector = null
+    ) {
 
-        // initialize the product variant processor instance
+        // initialize the product variant processor and the attribute loader instance
+        $this->attributeLoader = $attributeLoader;
         $this->productVariantProcessor = $productVariantProcessor;
 
         // pass the state detector to the parent method
@@ -92,6 +132,19 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     protected function getProductVariantProcessor()
     {
         return $this->productVariantProcessor;
+    }
+
+    /**
+     * Query whether or not a value for the column with the passed name exists.
+     *
+     * @param string $name The column name to query for a valid value
+     *
+     * @return boolean TRUE if the value is set, else FALSE
+     * @todo https://github.com/techdivision/import/issues/179
+     */
+    public function hasValue($name)
+    {
+        return parent::hasValue(isset($this->virtualMapping[$name]) ? $this->virtualMapping[$name] : $name);
     }
 
     /**
@@ -126,12 +179,14 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
 
         try {
             // initialize and save the super attribute
-            if ($this->hasChanges($productSuperAttribute = $this->initializeProductSuperAttribute($this->prepareProducSuperAttributeAttributes()))) {
+            $attr = $this->prepareDynamicAttributes(EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE, $this->prepareProductSuperAttributeAttributes());
+            if ($this->hasChanges($productSuperAttribute = $this->initializeProductSuperAttribute($attr))) {
                 $this->persistProductSuperAttribute($productSuperAttribute);
             }
 
             // initialize and save the super attribute label
-            if ($this->hasChanges($productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($this->prepareProductSuperAttributeLabelAttributes()))) {
+            $attr = $this->prepareDynamicAttributes(EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE_LABEL, $this->prepareProductSuperAttributeLabelAttributes());
+            if ($this->hasChanges($productSuperAttributeLabel = $this->initializeProductSuperAttributeLabel($attr))) {
                 $this->persistProductSuperAttributeLabel($productSuperAttributeLabel);
             }
 
@@ -166,11 +221,27 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     }
 
     /**
+     * Appends the dynamic attributes to the static ones and returns them.
+     *
+     * @param string $entityTypeCode   The entity type code load to append the dynamic attributes for
+     * @param array  $staticAttributes The array with the static attributes to append the dynamic to
+     *
+     * @return array The array with all available attributes
+     */
+    protected function prepareDynamicAttributes(string $entityTypeCode, array $staticAttributes) : array
+    {
+        return array_merge(
+            $staticAttributes,
+            $this->attributeLoader ? $this->attributeLoader->load($this, $this->columns[$entityTypeCode]) : array()
+        );
+    }
+
+    /**
      * Prepare the product super attribute attributes that has to be persisted.
      *
      * @return array The prepared product attribute attributes
      */
-    protected function prepareProducSuperAttributeAttributes()
+    protected function prepareProductSuperAttributeAttributes()
     {
 
         // load the parent ID
@@ -178,14 +249,15 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
 
         // load the attribute ID and position
         $attributeId = $this->getAttributeId();
-        $position = $this->getValue(ColumnKeys::VARIANT_VARIATION_POSITION, 0);
 
         // initialize the attributes and return them
         return $this->initializeEntity(
-            array(
-                MemberNames::PRODUCT_ID   => $parentId,
-                MemberNames::ATTRIBUTE_ID => $attributeId,
-                MemberNames::POSITION     => $position
+            $this->loadRawEntity(
+                EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE,
+                array(
+                    MemberNames::PRODUCT_ID   => $parentId,
+                    MemberNames::ATTRIBUTE_ID => $attributeId
+                )
             )
         );
     }
@@ -199,22 +271,39 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver
     {
 
         // extract the parent/child ID as well as option value and variation label from the row
-        $variationLabel = $this->getValue(ColumnKeys::VARIANT_VARIATION_LABEL);
+        $label = $this->getValue(ColumnKeys::VARIANT_VARIATION_LABEL);
+        $useDefault = $this->getValue(ColumnKeys::VARIANT_VARIATION_USE_DEFAULT, 0);
 
         // query whether or not we've to create super attribute labels
-        if (empty($variationLabel)) {
-            $variationLabel = $this->getFrontendLabel();
+        if (empty($label)) {
+            $label = $this->getFrontendLabel();
         }
 
         // initialize the attributes and return them
         return $this->initializeEntity(
-            array(
-                MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID => $this->getProductSuperAttributeId(),
-                MemberNames::STORE_ID                   => $this->getRowStoreId(StoreViewCodes::ADMIN),
-                MemberNames::USE_DEFAULT                => 0,
-                MemberNames::VALUE                      => $variationLabel
+            $this->loadRawEntity(
+                EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE_LABEL,
+                array(
+                    MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID => $this->getProductSuperAttributeId(),
+                    MemberNames::STORE_ID                   => $this->getRowStoreId(StoreViewCodes::ADMIN),
+                    MemberNames::USE_DEFAULT                => $useDefault,
+                    MemberNames::VALUE                      => $label
+                )
             )
         );
+    }
+
+    /**
+     * Load's and return's a raw entity without primary key but the mandatory members only and nulled values.
+     *
+     * @param string $entityTypeCode The entity type code to return the raw entity for
+     * @param array  $data           An array with data that will be used to initialize the raw entity with
+     *
+     * @return array The initialized entity
+     */
+    protected function loadRawEntity($entityTypeCode, array $data = array())
+    {
+        return $this->getProductVariantProcessor()->loadRawEntity($entityTypeCode, $data);
     }
 
     /**

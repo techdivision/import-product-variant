@@ -36,6 +36,13 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
 {
 
     /**
+     * Return's the raw entity loader instance.
+     *
+     * @return \TechDivision\Import\Loaders\LoaderInterface The raw entity loader instance
+     */
+    public function getRawEntityLoader();
+
+    /**
      * Return's the repository to access EAV attributes.
      *
      * @return \TechDivision\Import\Repositories\EavAttributeRepositoryInterface The repository instance
@@ -100,6 +107,16 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
      * @return array|boolean The attribute option value instance
      */
     public function getEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId);
+
+    /**
+     * Load's and return's a raw entity without primary key but the mandatory members only and nulled values.
+     *
+     * @param string $entityTypeCode The entity type code to return the raw entity for
+     * @param array  $data           An array with data that will be used to initialize the raw entity with
+     *
+     * @return array The initialized entity
+     */
+    public function loadRawEntity($entityTypeCode, array $data = array());
 
     /**
      * Load's the product super link with the passed product/parent ID.

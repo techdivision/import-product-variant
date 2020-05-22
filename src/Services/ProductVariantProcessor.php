@@ -20,6 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Services;
 
+use TechDivision\Import\Loaders\LoaderInterface;
 use TechDivision\Import\Actions\ActionInterface;
 use TechDivision\Import\Connection\ConnectionInterface;
 use TechDivision\Import\Repositories\EavAttributeRepositoryInterface;
@@ -119,6 +120,13 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     protected $productSuperLinkAction;
 
     /**
+     * The raw entity loader instance.
+     *
+     * @var \TechDivision\Import\Loaders\LoaderInterface
+     */
+    protected $rawEntityLoader;
+
+    /**
      * Initialize the processor with the necessary assembler and repository instances.
      *
      * @param \TechDivision\Import\Connection\ConnectionInterface                                             $connection                           The connection to use
@@ -132,6 +140,7 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
      * @param \TechDivision\Import\Actions\ActionInterface                                                    $productSuperLinkAction               The product super link action to use
      * @param \TechDivision\Import\Actions\ActionInterface                                                    $productSuperAttributeAction          The product super attribute action to use
      * @param \TechDivision\Import\Actions\ActionInterface                                                    $productSuperAttributeLabelAction     The product super attribute label action to use
+     * @param \TechDivision\Import\Loaders\LoaderInterface                                                    $rawEntityLoader                      The raw entity loader instance
      */
     public function __construct(
         ConnectionInterface $connection,
@@ -144,7 +153,8 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
         ActionInterface $productRelationAction,
         ActionInterface $productSuperLinkAction,
         ActionInterface $productSuperAttributeAction,
-        ActionInterface $productSuperAttributeLabelAction
+        ActionInterface $productSuperAttributeLabelAction,
+        LoaderInterface $rawEntityLoader
     ) {
         $this->setConnection($connection);
         $this->setEavAttributeOptionValueRepository($eavAttributeOptionValueRepository);
@@ -157,6 +167,29 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
         $this->setProductSuperLinkAction($productSuperLinkAction);
         $this->setProductSuperAttributeAction($productSuperAttributeAction);
         $this->setProductSuperAttributeLabelAction($productSuperAttributeLabelAction);
+        $this->setRawEntityLoader($rawEntityLoader);
+    }
+
+    /**
+     * Set's the raw entity loader instance.
+     *
+     * @param \TechDivision\Import\Loaders\LoaderInterface $rawEntityLoader The raw entity loader instance to set
+     *
+     * @return void
+     */
+    public function setRawEntityLoader(LoaderInterface $rawEntityLoader)
+    {
+        $this->rawEntityLoader = $rawEntityLoader;
+    }
+
+    /**
+     * Return's the raw entity loader instance.
+     *
+     * @return \TechDivision\Import\Loaders\LoaderInterface The raw entity loader instance
+     */
+    public function getRawEntityLoader()
+    {
+        return $this->rawEntityLoader;
     }
 
     /**
@@ -456,6 +489,19 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     public function getEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId)
     {
         return $this->getEavAttributeOptionValueRepository()->findEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId);
+    }
+
+    /**
+     * Load's and return's a raw entity without primary key but the mandatory members only and nulled values.
+     *
+     * @param string $entityTypeCode The entity type code to return the raw entity for
+     * @param array  $data           An array with data that will be used to initialize the raw entity with
+     *
+     * @return array The initialized entity
+     */
+    public function loadRawEntity($entityTypeCode, array $data = array())
+    {
+        return $this->getRawEntityLoader()->load($entityTypeCode, $data);
     }
 
     /**

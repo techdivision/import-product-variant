@@ -94,4 +94,11 @@ class ColumnKeys extends \TechDivision\Import\Product\Utils\ColumnKeys
      * @var string
      */
     const VARIANT_VARIATION_POSITION = 'variant_variation_position';
+
+    /**
+     * Name for the column 'variant_variation_use_default'.
+     *
+     * @var string
+     */
+    const VARIANT_VARIATION_USE_DEFAULT = 'variant_variation_use_default';
 }

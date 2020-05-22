@@ -9,8 +9,29 @@
 
     <services>
 
+        <!--
+         | The DI utility configuration
+         |-->
+        <service id="import_product_variant.util.sql.compilers" class="\ArrayObject">
+            <call method="append">
+                <argument id="import.util.primary.key" type="service"/>
+            </call>
+            <call method="append">
+                <argument id="import.util.table.prefix" type="service"/>
+            </call>
+            <call method="append">
+                <argument id="import.util.column.names" type="service"/>
+            </call>
+            <call method="append">
+                <argument id="import.util.column.placeholders" type="service"/>
+            </call>
+            <call method="append">
+                <argument id="import.util.column.values" type="service"/>
+            </call>
+        </service>
+
         <service id="import_product_variant.repository.sql.statement" class="TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository">
-            <argument type="service" id="import.util.sql.compilers"/>
+            <argument type="service" id="import_product_variant.util.sql.compilers"/>
         </service>
         <service id="import_product_variant.repository.product.super.attribute" class="TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository">
             <argument type="service" id="connection"/>
@@ -60,6 +81,12 @@
             <argument type="service" id="import_product_variant.action.processor.product.super.link.create"/>
         </service>
 
+        <service id="import_product_variant.loader.raw.entity" class="TechDivision\Import\Product\Variant\Loaders\RawEntityLoader">
+            <argument type="service" id="connection"/>
+            <argument type="service" id="import.loader.column.metadata"/>
+            <argument type="service" id="import.loader.raw.entity"/>
+        </service>
+
         <service id="import_product_variant.processor.product.variant" class="TechDivision\Import\Product\Variant\Services\ProductVariantProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import.repository.eav.attribute.option.value"/>
@@ -72,6 +99,7 @@
             <argument type="service" id="import_product_variant.action.product.super.link"/>
             <argument type="service" id="import_product_variant.action.product.super.attribute"/>
             <argument type="service" id="import_product_variant.action.product.super.attribute.label"/>
+            <argument type="service" id="import_product_variant.loader.raw.entity"/>
         </service>
 
         <service id="import_product_variant.observer.product.variant" class="TechDivision\Import\Product\Variant\Observers\ProductVariantObserver"/>
@@ -89,9 +117,11 @@
         </service>
         <service id="import_product_variant.observer.variant.super.attribute" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
+            <argument type="service" id="import.observer.dynamic.attribute.loader"/>
         </service>
         <service id="import_product_variant.observer.variant.super.attribute.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
+            <argument type="service" id="import.observer.dynamic.attribute.loader"/>
         </service>
         <service id="import_product_variant.observer.sku.entity.id.mapping" class="TechDivision\Import\Product\Observers\GenericSkuEntityIdMappingObserver">
             <argument type="service" id="import_product.processor.product.bunch"/>

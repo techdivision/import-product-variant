@@ -123,7 +123,7 @@ class ProductVariantObserver extends AbstractProductImportObserver
                     }
 
                     // load the apropriate variation position
-                    $varPosition = 0;
+                    $varPosition = null;
                     if (isset($varPositions[$optionCode])) {
                         $varPosition = $varPositions[$optionCode];
                     }
