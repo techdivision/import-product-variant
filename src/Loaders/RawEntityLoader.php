@@ -14,7 +14,7 @@
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2020 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/import-product
+ * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
 
@@ -30,7 +30,7 @@ use TechDivision\Import\Product\Variant\Utils\EntityTypeCodes;
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2020 TechDivision GmbH <info@techdivision.com>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/techdivision/import-product
+ * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
 class RawEntityLoader implements LoaderInterface

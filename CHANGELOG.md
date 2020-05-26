@@ -7,6 +7,7 @@
 ## Features
 
 * Add #PAC-46
+* Add #PAC-47
 
 # Version 21.1.0
 

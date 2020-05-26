@@ -101,7 +101,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
      * @var array
      * @todo https://github.com/techdivision/import/issues/179
      */
-    protected $virtualMapping = array(ColumnKeys::POSITION => ColumnKeys::VARIANT_VARIATION_POSITION);
+    protected $virtualMapping = array(MemberNames::POSITION => ColumnKeys::VARIANT_VARIATION_POSITION);
 
     /**
      * Initialize the observer with the passed product variant processor instance.
