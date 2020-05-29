@@ -20,17 +20,19 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
+use TechDivision\Import\Utils\EntityStatus;
 use TechDivision\Import\Utils\StoreViewCodes;
 use TechDivision\Import\Utils\BackendTypeKeys;
 use TechDivision\Import\Observers\StateDetectorInterface;
 use TechDivision\Import\Observers\AttributeLoaderInterface;
+use TechDivision\Import\Observers\DynamicAttributeObserverInterface;
 use TechDivision\Import\Product\Utils\RelationTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\EntityTypeCodes;
 use TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface;
 use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
-use TechDivision\Import\Observers\DynamicAttributeObserverInterface;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Oberserver that provides functionality for the product variant super attributes replace operation.
@@ -80,6 +82,13 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
     protected $attributeLoader;
 
     /**
+     * The collection with entity merger instances.
+     *
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    protected $entityMergers;
+
+    /**
      * Initialize the "dymanmic" columns.
      *
      * @var array
@@ -95,30 +104,25 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
     );
 
     /**
-     * Array with virtual column name mappings (this is a temporary
-     * solution till techdivision/import#179 as been implemented).
-     *
-     * @var array
-     * @todo https://github.com/techdivision/import/issues/179
-     */
-    protected $virtualMapping = array(MemberNames::POSITION => ColumnKeys::VARIANT_VARIATION_POSITION);
-
-    /**
      * Initialize the observer with the passed product variant processor instance.
      *
      * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
      * @param \TechDivision\Import\Observers\AttributeLoaderInterface|null                   $attributeLoader         The attribute loader instance
+     * @param \Doctrine\Common\Collections\Collection|null                                   $entityMergers           The collection with the entity merger instances
      * @param \TechDivision\Import\Observers\StateDetectorInterface|null                     $stateDetector           The state detector instance
      */
     public function __construct(
         ProductVariantProcessorInterface $productVariantProcessor,
         AttributeLoaderInterface $attributeLoader = null,
+        Collection $entityMergers = null,
         StateDetectorInterface $stateDetector = null
     ) {
 
         // initialize the product variant processor and the attribute loader instance
-        $this->attributeLoader = $attributeLoader;
         $this->productVariantProcessor = $productVariantProcessor;
+        $this->attributeLoader = $attributeLoader;
+        $this->entityMergers = $entityMergers;
+
 
         // pass the state detector to the parent method
         parent::__construct($stateDetector);
@@ -132,19 +136,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
     protected function getProductVariantProcessor()
     {
         return $this->productVariantProcessor;
-    }
-
-    /**
-     * Query whether or not a value for the column with the passed name exists.
-     *
-     * @param string $name The column name to query for a valid value
-     *
-     * @return boolean TRUE if the value is set, else FALSE
-     * @todo https://github.com/techdivision/import/issues/179
-     */
-    public function hasValue($name)
-    {
-        return parent::hasValue(isset($this->virtualMapping[$name]) ? $this->virtualMapping[$name] : $name);
     }
 
     /**
@@ -218,6 +209,27 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             // else, throw the exception
             throw $wrappedException;
         }
+    }
+
+    /**
+     * Merge's and return's the entity with the passed attributes and set's the
+     * passed status.
+     *
+     * @param array       $entity         The entity to merge the attributes into
+     * @param array       $attr           The attributes to be merged
+     * @param string|null $changeSetName  The change set name to use
+     * @param string|null $entityTypeCode The entity type code to use
+     *
+     * @return array The merged entity
+     * @todo https://github.com/techdivision/import/issues/179
+     */
+    protected function mergeEntity(array $entity, array $attr, $changeSetName = null, $entityTypeCode = null)
+    {
+        return array_merge(
+            $entity,
+            ($this->entityMergers && $this->entityMergers->containsKey($entityTypeCode)) ? $this->entityMergers->get($entityTypeCode)->merge($this, $entity, $attr) : $attr,
+            array(EntityStatus::MEMBER_NAME => $this->detectState($entity, $attr, $changeSetName))
+        );
     }
 
     /**

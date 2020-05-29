@@ -56,44 +56,24 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
               WHERE product_super_attribute_id = :product_super_attribute_id
                 AND store_id = :store_id',
         SqlStatementKeys::CREATE_PRODUCT_SUPER_LINK =>
-            'INSERT
-               INTO ${table:catalog_product_super_link}
-                    (product_id,
-                     parent_id)
-             VALUES (:product_id,
-                     :parent_id)',
+            'INSERT ${table:catalog_product_super_link}
+                    (${column-names:catalog_product_super_link})
+             VALUES (${column-placeholders:catalog_product_super_link})',
         SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE =>
-            'INSERT
-               INTO ${table:catalog_product_super_attribute}
-                    (product_id,
-                     attribute_id,
-                     position)
-             VALUES (:product_id,
-                     :attribute_id,
-                     :position)',
+            'INSERT ${table:catalog_product_super_attribute}
+                    (${column-names:catalog_product_super_attribute})
+             VALUES (${column-placeholders:catalog_product_super_attribute})',
         SqlStatementKeys::UPDATE_PRODUCT_SUPER_ATTRIBUTE =>
             'UPDATE ${table:catalog_product_super_attribute}
-                SET product_id = :product_id,
-                    attribute_id = :attribute_id,
-                    position = :position
+                SET ${column-values:catalog_product_super_attribute}
               WHERE product_super_attribute_id = :product_super_attribute_id',
         SqlStatementKeys::CREATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
-            'INSERT
-                INTO ${table:catalog_product_super_attribute_label}
-                     (product_super_attribute_id,
-                      store_id,
-                      use_default,
-                      value)
-              VALUES (:product_super_attribute_id,
-                      :store_id,
-                      :use_default,
-                      :value)',
+            'INSERT ${table:catalog_product_super_attribute_label}
+                    (${column-names:catalog_product_super_attribute_label})
+             VALUES (${column-placeholders:catalog_product_super_attribute_label})',
         SqlStatementKeys::UPDATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'UPDATE ${table:catalog_product_super_attribute_label}
-                SET product_super_attribute_id = :product_super_attribute_id,
-                    store_id = :store_id,
-                    use_default = :use_default,
-                    value = :value
+                SET ${column-values:catalog_product_super_attribute_label}
               WHERE value_id = :value_id'
     );
 
