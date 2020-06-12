@@ -1,3 +1,13 @@
+# Version 23.0.0
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Switch to latest techdivision/import-product 23.* version as dependency
+
 # Version 22.0.0
 
 ## Bugfixes
@@ -7,6 +17,7 @@
 ## Features
 
 * Add #PAC-47
+* Switch to latest techdivision/import-product 22.* version as dependency
 
 # Version 21.1.0
 
