@@ -21,6 +21,7 @@
 namespace TechDivision\Import\Product\Variant\Services;
 
 use TechDivision\Import\Product\Services\ProductProcessorInterface;
+use TechDivision\Import\Product\Services\ProductRelationAwareProcessorInterface;
 
 /**
  * Interface for product variant processor implementations.
@@ -31,8 +32,15 @@ use TechDivision\Import\Product\Services\ProductProcessorInterface;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-interface ProductVariantProcessorInterface extends ProductProcessorInterface
+interface ProductVariantProcessorInterface extends ProductProcessorInterface, ProductRelationAwareProcessorInterface
 {
+
+    /**
+     * Return's the raw entity loader instance.
+     *
+     * @return \TechDivision\Import\Loaders\LoaderInterface The raw entity loader instance
+     */
+    public function getRawEntityLoader();
 
     /**
      * Return's the repository to access EAV attributes.
@@ -40,13 +48,6 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
      * @return \TechDivision\Import\Repositories\EavAttributeRepositoryInterface The repository instance
      */
     public function getEavAttributeRepository();
-
-    /**
-     * Return's the repository to access product relations.
-     *
-     * @return \TechDivision\Import\Product\Variant\Repositories\ProductRelationRepositoryInterface The repository instance
-     */
-    public function getProductRelationRepository();
 
     /**
      * Return's the repository to access product super links.
@@ -77,30 +78,23 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
     public function getEavAttributeOptionValueRepository();
 
     /**
-     * Return's the action with the product relation CRUD methods.
-     *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductRelationActionInterface The action instance
-     */
-    public function getProductRelationAction();
-
-    /**
      * Return's the action with the product super attribute CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperAttributeAction();
 
     /**
      * Return's the action with the product super attribute label CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperAttributeLabelAction();
 
     /**
      * Return's the action with the product super link CRUD methods.
      *
-     * @return \TechDivision\Import\Product\Variant\Actions\ProductSuperLinkActionInterface The action instance
+     * @return \TechDivision\Import\Actions\ActionInterface The action instance
      */
     public function getProductSuperLinkAction();
 
@@ -115,14 +109,14 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
     public function getEavAttributeOptionValueByOptionValueAndStoreId($value, $storeId);
 
     /**
-     * Load's the product relation with the passed parent/child ID.
+     * Load's and return's a raw entity without primary key but the mandatory members only and nulled values.
      *
-     * @param integer $parentId The entity ID of the product relation's parent product
-     * @param integer $childId  The entity ID of the product relation's child product
+     * @param string $entityTypeCode The entity type code to return the raw entity for
+     * @param array  $data           An array with data that will be used to initialize the raw entity with
      *
-     * @return array The product relation
+     * @return array The initialized entity
      */
-    public function loadProductRelation($parentId, $childId);
+    public function loadRawEntity($entityTypeCode, array $data = array());
 
     /**
      * Load's the product super link with the passed product/parent ID.
@@ -153,16 +147,6 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface
      * @return array The product super attribute label
      */
     public function loadProductSuperAttributeLabel($productSuperAttributeId, $storeId);
-
-    /**
-     * Persist's the passed product relation data and return's the ID.
-     *
-     * @param array       $productRelation The product relation data to persist
-     * @param string|null $name            The name of the prepared statement that has to be executed
-     *
-     * @return void
-     */
-    public function persistProductRelation($productRelation, $name = null);
 
     /**
      * Persist's the passed product super link data and return's the ID.

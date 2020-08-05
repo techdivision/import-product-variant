@@ -47,6 +47,13 @@ class ColumnKeys extends \TechDivision\Import\Product\Utils\ColumnKeys
     const CONFIGURABLE_VARIATION_LABELS = 'configurable_variation_labels';
 
     /**
+     * Name for the column 'configurable_variations_position'.
+     *
+     * @var string
+     */
+    const CONFIGURABLE_VARIATIONS_POSITION = 'configurable_variations_position';
+
+    /**
      * Name for the column 'variant_parent_sku'.
      *
      * @var string
@@ -80,4 +87,18 @@ class ColumnKeys extends \TechDivision\Import\Product\Utils\ColumnKeys
      * @var string
      */
     const VARIANT_VARIATION_LABEL = 'variant_variation_label';
+
+    /**
+     * Name for the column 'variant_variation_position'.
+     *
+     * @var string
+     */
+    const VARIANT_VARIATION_POSITION = 'variant_variation_position';
+
+    /**
+     * Name for the column 'variant_variation_use_default'.
+     *
+     * @var string
+     */
+    const VARIANT_VARIATION_USE_DEFAULT = 'variant_variation_use_default';
 }

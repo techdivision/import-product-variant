@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TechDivision\Import\Product\Variant\Actions\Processors\ProductRelationCreateProcessor
+ * TechDivision\Import\Product\Variant\Observers\VariantProductRelationUpdateObserver
  *
  * NOTICE OF LICENSE
  *
@@ -18,13 +18,13 @@
  * @link      http://www.techdivision.com
  */
 
-namespace TechDivision\Import\Product\Variant\Actions\Processors;
+namespace TechDivision\Import\Product\Variant\Observers;
 
-use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
-use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
+use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
+use TechDivision\Import\Product\Observers\AbstractProductRelationUpdateObserver;
 
 /**
- * The product relation create processor implementation.
+ * Oberserver that provides functionality for the variant product relation add/update operation.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -32,21 +32,26 @@ use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductRelationCreateProcessor extends AbstractCreateProcessor
+class VariantProductRelationUpdateObserver extends AbstractProductRelationUpdateObserver
 {
 
     /**
-     * Return's the array with the SQL statements that has to be prepared.
+     * Returns the column name with the parent SKU.
      *
-     * @return array The SQL statements to be prepared
-     * @see \TechDivision\Import\Actions\Processors\AbstractBaseProcessor::getStatements()
+     * @return string The column name with the parent SKU
      */
-    protected function getStatements()
+    protected function getParentSkuColumnName()
     {
+        return ColumnKeys::VARIANT_PARENT_SKU;
+    }
 
-        // return the array with the SQL statements that has to be prepared
-        return array(
-            SqlStatementKeys::CREATE_PRODUCT_RELATION => $this->loadStatement(SqlStatementKeys::CREATE_PRODUCT_RELATION)
-        );
+    /**
+     * Returns the column name with the child SKU.
+     *
+     * @return string The column name with the child SKU
+     */
+    protected function getChildSkuColumnName()
+    {
+        return ColumnKeys::VARIANT_CHILD_SKU;
     }
 }

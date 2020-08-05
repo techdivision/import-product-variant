@@ -3,12 +3,52 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+        <parameter key="import_product_variant.param.sku.column.name" type="constant">TechDivision\Import\Product\Variant\Utils\ColumnKeys::VARIANT_CHILD_SKU</parameter>
+    </parameters>
+
     <services>
 
-        <service id="import_product_variant.repository.sql.statement" class="TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository"/>
-        <service id="import_product_variant.repository.product.relation" class="TechDivision\Import\Product\Variant\Repositories\ProductRelationRepository">
-            <argument type="service" id="connection"/>
-            <argument type="service" id="import_product_variant.repository.sql.statement"/>
+        <!--
+         | The DI configuration for the entity mergers
+         |-->
+        <service id="import_product_variant.loader.header.mapping.super.attribute" class="TechDivision\Import\Loaders\EntityTypeHeaderMappingLoader">
+            <argument type="service" id="import.loader.header.mapping"/>
+            <argument type="constant">TechDivision\Import\Product\Variant\Utils\EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE</argument>
+        </service>
+        <service id="import_product_variant.loader.header.mapping.super.attribute.label" class="TechDivision\Import\Loaders\EntityTypeHeaderMappingLoader">
+            <argument type="service" id="import.loader.header.mapping"/>
+            <argument type="constant">TechDivision\Import\Product\Variant\Utils\EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE_LABEL</argument>
+        </service>
+        <service id="import_product_variant.entity.merger.empty.columns.super.attribute" class="TechDivision\Import\Observers\EntityMergers\CleanUpColumnsEntityMerger">
+            <argument type="service" id="import_product_variant.loader.header.mapping.super.attribute"/>
+        </service>
+        <service id="import_product_variant.entity.merger.empty.columns.super.attribute.label" class="TechDivision\Import\Observers\EntityMergers\CleanUpColumnsEntityMerger">
+            <argument type="service" id="import_product_variant.loader.header.mapping.super.attribute.label"/>
+        </service>
+        <service id="import_product_variant.entity.merger.composite.super.attribute" class="TechDivision\Import\Observers\EntityMergers\GenericCompositeEntityMerger">
+            <call method="append">
+                <argument type="service" id="import_product_variant.entity.merger.empty.columns.super.attribute"/>
+            </call>
+        </service>
+        <service id="import_product_variant.entity.merger.composite.super.attribute.label" class="TechDivision\Import\Observers\EntityMergers\GenericCompositeEntityMerger">
+            <call method="append">
+                <argument type="service" id="import_product_variant.entity.merger.empty.columns.super.attribute.label"/>
+            </call>
+        </service>
+        <service id="import_product_variant.entity.merger.collection.super.attribute" class="Doctrine\Common\Collections\ArrayCollection">
+            <call method="set">
+                <argument type="constant">TechDivision\Import\Product\Variant\Utils\EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE</argument>
+                <argument type="service" id="import_product_variant.entity.merger.empty.columns.super.attribute"/>
+            </call>
+            <call method="set">
+                <argument type="constant">TechDivision\Import\Product\Variant\Utils\EntityTypeCodes::CATALOG_PRODUCT_SUPER_ATTRIBUTE_LABEL</argument>
+                <argument type="service" id="import_product_variant.entity.merger.empty.columns.super.attribute.label"/>
+            </call>
+        </service>
+
+        <service id="import_product_variant.repository.sql.statement" class="TechDivision\Import\Product\Variant\Repositories\SqlStatementRepository">
+            <argument type="service" id="import.util.sql.compilers"/>
         </service>
         <service id="import_product_variant.repository.product.super.attribute" class="TechDivision\Import\Product\Variant\Repositories\ProductSuperAttributeRepository">
             <argument type="service" id="connection"/>
@@ -23,72 +63,131 @@
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
         </service>
 
-        <service id="import_product_variant.action.processor.product.relation.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductRelationCreateProcessor">
-            <argument type="service" id="connection"/>
-            <argument type="service" id="import_product_variant.repository.sql.statement"/>
-        </service>
         <service id="import_product_variant.action.processor.product.super.attribute.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeCreateProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
+            <argument type="service" id="import.util.sql.sanitizers"/>
         </service>
         <service id="import_product_variant.action.processor.product.super.attribute.update" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeUpdateProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
+            <argument type="service" id="import.util.sql.sanitizers"/>
         </service>
         <service id="import_product_variant.action.processor.product.super.attribute.label.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeLabelCreateProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
+            <argument type="service" id="import.util.sql.sanitizers"/>
         </service>
         <service id="import_product_variant.action.processor.product.super.attribute.label.update" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeLabelUpdateProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
+            <argument type="service" id="import.util.sql.sanitizers"/>
         </service>
         <service id="import_product_variant.action.processor.product.super.link.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperLinkCreateProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
         </service>
 
-        <service id="import_product_variant.action.product.relation" class="TechDivision\Import\Product\Variant\Actions\ProductRelationAction">
-            <argument type="service" id="import_product_variant.action.processor.product.relation.create"/>
-        </service>
-        <service id="import_product_variant.action.product.super.attribute" class="TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeAction">
+        <service id="import_product_variant.action.product.super.attribute" class="TechDivision\Import\Actions\GenericIdentifierAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.create"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.update"/>
+            <argument type="service" id="import_product_variant.action.processor.product.super.attribute.delete" on-invalid="ignore"/>
+            <argument type="constant">TechDivision\Import\Product\Variant\Utils\MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID</argument>
         </service>
-        <service id="import_product_variant.action.product.super.attribute.label" class="TechDivision\Import\Product\Variant\Actions\ProductSuperAttributeLabelAction">
+        <service id="import_product_variant.action.product.super.attribute.label" class="TechDivision\Import\Actions\GenericAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.label.create"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.label.update"/>
         </service>
-        <service id="import_product_variant.action.product.super.link" class="TechDivision\Import\Product\Variant\Actions\ProductSuperLinkAction">
+        <service id="import_product_variant.action.product.super.link" class="TechDivision\Import\Actions\GenericAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.link.create"/>
+        </service>
+
+        <service id="import_product_variant.loader.raw.entity" class="TechDivision\Import\Product\Variant\Loaders\RawEntityLoader">
+            <argument type="service" id="connection"/>
+            <argument type="service" id="import.loader.column.metadata"/>
+            <argument type="service" id="import.loader.raw.entity"/>
         </service>
 
         <service id="import_product_variant.processor.product.variant" class="TechDivision\Import\Product\Variant\Services\ProductVariantProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import.repository.eav.attribute.option.value"/>
             <argument type="service" id="import.repository.eav.attribute"/>
-            <argument type="service" id="import_product_variant.repository.product.relation"/>
+            <argument type="service" id="import_product.repository.product.relation"/>
             <argument type="service" id="import_product_variant.repository.product.super.link"/>
             <argument type="service" id="import_product_variant.repository.product.super.attribute"/>
             <argument type="service" id="import_product_variant.repository.product.super.attribute.label"/>
-            <argument type="service" id="import_product_variant.action.product.relation"/>
+            <argument type="service" id="import_product.action.product.relation"/>
             <argument type="service" id="import_product_variant.action.product.super.link"/>
             <argument type="service" id="import_product_variant.action.product.super.attribute"/>
             <argument type="service" id="import_product_variant.action.product.super.attribute.label"/>
+            <argument type="service" id="import_product_variant.loader.raw.entity"/>
         </service>
 
         <service id="import_product_variant.observer.product.variant" class="TechDivision\Import\Product\Variant\Observers\ProductVariantObserver"/>
-        <service id="import_product_variant.observer.variant" class="TechDivision\Import\Product\Variant\Observers\VariantObserver">
+        <service id="import_product_variant.observer.variant.super.link" class="TechDivision\Import\Product\Variant\Observers\VariantSuperLinkObserver">
+            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+        <service id="import_product_variant.observer.variant.super.link.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperLinkUpdateObserver">
+            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+        <service id="import_product_variant.observer.variant.product.relation" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationObserver">
+            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+        <service id="import_product_variant.observer.variant.product.relation.update" class="TechDivision\Import\Product\Variant\Observers\VariantProductRelationUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
         </service>
         <service id="import_product_variant.observer.variant.super.attribute" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
+            <argument type="service" id="import.observer.dynamic.attribute.loader"/>
+            <argument type="service" id="import_product_variant.entity.merger.collection.super.attribute"/>
         </service>
         <service id="import_product_variant.observer.variant.super.attribute.update" class="TechDivision\Import\Product\Variant\Observers\VariantSuperAttributeUpdateObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
+            <argument type="service" id="import.observer.dynamic.attribute.loader"/>
+            <argument type="service" id="import_product_variant.entity.merger.collection.super.attribute"/>
         </service>
-        <service id="import_product_variant.observer.variant.update" class="TechDivision\Import\Product\Variant\Observers\VariantUpdateObserver">
-            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        <service id="import_product_variant.observer.sku.entity.id.mapping" class="TechDivision\Import\Product\Observers\GenericSkuEntityIdMappingObserver">
+            <argument type="service" id="import_product.processor.product.bunch"/>
+            <argument type="string">%import_product_variant.param.sku.column.name%</argument>
+        </service>
+
+        <!--
+         | The DI configuration for the composite observers of the replace operation.
+         |-->
+        <service id="import_product_variant.observer.composite.replace" class="TechDivision\Import\Observers\GenericCompositeObserver">
+            <call method="addObserver">
+                <argument id="import.observer.attribute.set" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.link" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.attribute" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.product.relation" type="service"/>
+            </call>
+        </service>
+
+        <!--
+         | The DI configuration for the composite observers of the add-update operation.
+         |-->
+        <service id="import_product_variant.observer.composite.add_update" class="TechDivision\Import\Observers\GenericCompositeObserver">
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.sku.entity.id.mapping" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import.observer.attribute.set" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.link.update" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.super.attribute.update" type="service"/>
+            </call>
+            <call method="addObserver">
+                <argument id="import_product_variant.observer.variant.product.relation.update" type="service"/>
+            </call>
         </service>
 
         <service id="import_product_variant.subject.variant" class="TechDivision\Import\Product\Variant\Subjects\VariantSubject" shared="false">

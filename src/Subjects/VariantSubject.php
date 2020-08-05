@@ -21,10 +21,12 @@
 namespace TechDivision\Import\Product\Variant\Subjects;
 
 use TechDivision\Import\Utils\RegistryKeys;
+use TechDivision\Import\Product\Utils\ConfigurationKeys;
 use TechDivision\Import\Product\Subjects\AbstractProductSubject;
+use TechDivision\Import\Subjects\CleanUpColumnsSubjectInterface;
 
 /**
- * A SLSB that handles the process to import product variants.
+ * A subject implementation that handles the process to import product variants.
  *
  * @author    Tim Wagner <t.wagner@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@techdivision.com>
@@ -32,22 +34,15 @@ use TechDivision\Import\Product\Subjects\AbstractProductSubject;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class VariantSubject extends AbstractProductSubject
+class VariantSubject extends AbstractProductSubject implements CleanUpColumnsSubjectInterface
 {
 
     /**
-     * The ID of the parent product to relate the variant with.
+     * The trait that provides the functionality to import variants on subject level.
      *
-     * @var integer
+     * @var \TechDivision\Import\Product\Variant\Subjects\VariantSubjectTrait
      */
-    protected $parentId;
-
-    /**
-     * The mapping for the SKUs to the created entity IDs.
-     *
-     * @var array
-     */
-    protected $skuEntityIdMapping = array();
+    use VariantSubjectTrait;
 
     /**
      * Intializes the previously loaded global data for exactly one variants.
@@ -66,79 +61,30 @@ class VariantSubject extends AbstractProductSubject
         $registryProcessor = $this->getRegistryProcessor();
 
         // load the status of the actual import process
-        $status = $registryProcessor->getAttribute($serial);
+        $status = $registryProcessor->getAttribute(RegistryKeys::STATUS);
 
-        // load the attribute set we've prepared intially
+        // load the SKU => entity ID mapping
         $this->skuEntityIdMapping = $status[RegistryKeys::SKU_ENTITY_ID_MAPPING];
     }
 
     /**
-     * Set's the ID of the parent product to relate the variant with.
+     * Merge the columns from the configuration with all image type columns to define which
+     * columns should be cleaned-up.
      *
-     * @param integer $parentId The ID of the parent product
-     *
-     * @return void
+     * @return array The columns that has to be cleaned-up
      */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
-    }
-
-    /**
-     * Return's the ID of the parent product to relate the variant with.
-     *
-     * @return integer The ID of the parent product
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * Return the entity ID for the passed SKU.
-     *
-     * @param string $sku The SKU to return the entity ID for
-     *
-     * @return integer The mapped entity ID
-     * @throws \Exception Is thrown if the SKU is not mapped yet
-     */
-    public function mapSkuToEntityId($sku)
+    public function getCleanUpColumns()
     {
 
-        // query weather or not the SKU has been mapped
-        if (isset($this->skuEntityIdMapping[$sku])) {
-            return $this->skuEntityIdMapping[$sku];
+        // initialize the array for the columns that has to be cleaned-up
+        $cleanUpColumns = array();
+
+        // query whether or not an array has been specified in the configuration
+        if ($this->getConfiguration()->hasParam(ConfigurationKeys::CLEAN_UP_EMPTY_COLUMNS)) {
+            $cleanUpColumns = $this->getConfiguration()->getParam(ConfigurationKeys::CLEAN_UP_EMPTY_COLUMNS);
         }
 
-        // throw an exception if the SKU has not been mapped yet
-        throw new \Exception(
-            $this->appendExceptionSuffix(
-                sprintf('Found not mapped entity ID for SKU %s', $sku)
-            )
-        );
-    }
-
-    /**
-     * Return's the store for the passed store code.
-     *
-     * @param string $storeCode The store code to return the store for
-     *
-     * @return array The requested store
-     * @throws \Exception Is thrown, if the requested store is not available
-     */
-    public function getStoreByStoreCode($storeCode)
-    {
-
-        // query whether or not the store with the passed store code exists
-        if (isset($this->stores[$storeCode])) {
-            return $this->stores[$storeCode];
-        }
-
-        // throw an exception, if not
-        throw new \Exception(
-            $this->appendExceptionSuffix(
-                sprintf('Found invalid store code %s', $storeCode)
-            )
-        );
+        // return the array with the column names
+        return $cleanUpColumns;
     }
 }
