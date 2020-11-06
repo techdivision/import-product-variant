@@ -44,6 +44,13 @@ class ProductSuperLinkRepository extends AbstractRepository implements ProductSu
     protected $productSuperLinkStmt;
 
     /**
+     * The prepared statement to load an existing product super link.
+     *
+     * @var \PDOStatement
+     */
+    protected $productSuperLinkChildrenStmt;
+
+    /**
      * Initializes the repository's prepared statements.
      *
      * @return void
@@ -54,6 +61,8 @@ class ProductSuperLinkRepository extends AbstractRepository implements ProductSu
         // initialize the prepared statements
         $this->productSuperLinkStmt =
             $this->getConnection()->prepare($this->loadStatement(SqlStatementKeys::PRODUCT_SUPER_LINK));
+        $this->productSuperLinkChildrenStmt =
+            $this->getConnection()->prepare($this->loadStatement(SqlStatementKeys::PRODUCT_SUPER_LINK_PARENT));
     }
 
     /**
@@ -76,5 +85,25 @@ class ProductSuperLinkRepository extends AbstractRepository implements ProductSu
         // load and return the product super link with the passed product/parent ID
         $this->productSuperLinkStmt->execute($params);
         return $this->productSuperLinkStmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Load's the product super link with the passed product/parent ID.
+     *
+     * @param integer $parentId The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function findAllByParentId($parentId)
+    {
+
+        // initialize the params
+        $params = array(
+            MemberNames::PARENT_ID  => $parentId,
+        );
+
+        // load and return the product super link with the passed product/parent ID
+        $this->productSuperLinkChildrenStmt->execute($params);
+        return $this->productSuperLinkChildrenStmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

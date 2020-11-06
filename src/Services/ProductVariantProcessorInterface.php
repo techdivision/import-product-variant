@@ -121,6 +121,15 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
     /**
      * Load's the product super link with the passed product/parent ID.
      *
+     * @param integer $parentId The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function loadProductSuperLinksFromParent($parentId);
+
+    /**
+     * Load's the product super link with the passed product/parent ID.
+     *
      * @param integer $productId The entity ID of the product super link's product
      * @param integer $parentId  The entity ID of the product super link's parent product
      *
@@ -137,6 +146,15 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
      * @return array The product super attribute
      */
     public function loadProductSuperAttribute($productId, $attributeId);
+
+    /**
+     * Load's the product super attributes with the passed product ID.
+     *
+     * @param integer $productId The entity ID of the product super attribute's product
+     *
+     * @return array The product super attributes
+     */
+    public function loadProductSuperAttributesFromProduct($productId);
 
     /**
      * Load's the product super attribute label with the passed product super attribute/store ID.
@@ -177,4 +195,24 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
      * @return void
      */
     public function persistProductSuperAttributeLabel($productSuperAttributeLabel, $name = null);
+
+    /**
+     * Delete's the passed product link data.
+     *
+     * @param array       $row  The product link to be deleted
+     * @param string|null $name The name of the prepared statement that has to be executed
+     *
+     * @return string The ID of the persisted entity
+     */
+    public function deleteProductSuperLink(array $row, $name = null);
+
+    /**
+     * Delete's the passed product super attribute data
+     *
+     * @param array       $row  The product super attribute data to deleted
+     * @param string|null $name The name of the prepared statement that has to be executed
+     *
+     * @return string The ID of the persisted product super attribute entity
+     */
+    public function deleteProductSuperAttribute(array $row, $name = null);
 }

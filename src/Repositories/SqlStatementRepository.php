@@ -45,11 +45,19 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
                FROM ${table:catalog_product_super_link}
               WHERE product_id = :product_id
                 AND parent_id = :parent_id',
+        SqlStatementKeys::PRODUCT_SUPER_LINK_PARENT =>
+            'SELECT *
+               FROM ${table:catalog_product_super_link}
+              WHERE parent_id = :parent_id',
         SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE =>
             'SELECT *
                FROM ${table:catalog_product_super_attribute}
               WHERE product_id = :product_id
                 AND attribute_id = :attribute_id',
+        SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE_BY_PRODUCT =>
+            'SELECT *
+               FROM ${table:catalog_product_super_attribute}
+              WHERE product_id = :product_id',
         SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'SELECT *
                FROM ${table:catalog_product_super_attribute_label}
@@ -74,7 +82,15 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
         SqlStatementKeys::UPDATE_PRODUCT_SUPER_ATTRIBUTE_LABEL =>
             'UPDATE ${table:catalog_product_super_attribute_label}
                 SET ${column-values:catalog_product_super_attribute_label}
-              WHERE value_id = :value_id'
+              WHERE value_id = :value_id',
+        SqlStatementKeys::DELETE_PRODUCT_SUPER_LINK =>
+            'DELETE
+                FROM ${table:catalog_product_super_link}
+               WHERE link_id = :link_id',
+        SqlStatementKeys::DELETE_PRODUCT_SUPER_ATTRIBUTE =>
+            'DELETE
+                FROM ${table:catalog_product_super_attribute}
+               WHERE product_super_attribute_id = :product_super_attribute_id',
     );
 
     /**

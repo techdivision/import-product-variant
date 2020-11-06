@@ -43,4 +43,13 @@ interface ProductSuperAttributeRepositoryInterface extends RepositoryInterface
      * @return array The product super attribute
      */
     public function findOneByProductIdAndAttributeId($productId, $attributeId);
+
+    /**
+     * Load's the product super attribute with the passed product ID.
+     *
+     * @param integer $productId The entity ID of the product super attribute's product
+     *
+     * @return array The product super attributes
+     */
+    public function findOneByProductId($productId);
 }

@@ -43,4 +43,13 @@ interface ProductSuperLinkRepositoryInterface extends RepositoryInterface
      * @return array The product super link
      */
     public function findOneByProductIdAndParentId($productId, $parentId);
+
+    /**
+     * Load's the product super link with the passed product/parent ID.
+     *
+     * @param integer $parentId The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function findAllByParentId($parentId);
 }
