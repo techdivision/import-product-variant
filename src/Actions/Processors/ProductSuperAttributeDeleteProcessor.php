@@ -20,6 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
+use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
 use TechDivision\Import\Actions\Processors\AbstractUpdateProcessor;
 
@@ -48,5 +49,33 @@ class ProductSuperAttributeDeleteProcessor extends AbstractUpdateProcessor
         return array(
             SqlStatementKeys::DELETE_PRODUCT_SUPER_ATTRIBUTE => $this->loadStatement(SqlStatementKeys::DELETE_PRODUCT_SUPER_ATTRIBUTE)
         );
+    }
+
+    /**
+     * Delete all variants that are not actual imported
+     *
+     * @param array       $row                  The row to persist
+     * @param string|null $name                 The name of the prepared statement that has to be executed
+     * @param string|null $primaryKeyMemberName The primary key member name of the entity to use
+     *
+     * @return void
+     */
+    public function execute($row, $name = null, $primaryKeyMemberName = null)
+    {
+        $attributeIds = $row[MemberNames::ATTRIBUTE_ID];
+        if (!is_array($attributeIds)) {
+            $attributeIds = [$attributeIds];
+        }
+        // all skus that should not delete
+        $vals = implode(',', $attributeIds);
+        // replace placeholder
+        $sql = str_replace(
+            array(':attribute_ids', ':product_id'),
+            array($vals, $row[MemberNames::PRODUCT_ID]),
+            $this->loadStatement(SqlStatementKeys::DELETE_PRODUCT_SUPER_ATTRIBUTE)
+        );
+
+        // delete the variants that are NOT in values (take a look at DELETE_PRODUCT_SUPER_ATTRIBUTE definition)
+        $this->getConnection()->query($sql);
     }
 }

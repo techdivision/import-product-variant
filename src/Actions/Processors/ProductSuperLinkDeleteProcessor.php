@@ -20,6 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
+use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
 use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
 
@@ -36,17 +37,32 @@ class ProductSuperLinkDeleteProcessor extends AbstractCreateProcessor
 {
 
     /**
-     * Return's the array with the SQL statements that has to be prepared.
+     * Delete all variants that are not actual imported
      *
-     * @return array The SQL statements to be prepared
-     * @see \TechDivision\Import\Actions\Processors\AbstractBaseProcessor::getStatements()
+     * @param array       $row                  The row to persist
+     * @param string|null $name                 The name of the prepared statement that has to be executed
+     * @param string|null $primaryKeyMemberName The primary key member name of the entity to use
+     *
+     * @return void
      */
-    protected function getStatements()
+    public function execute($row, $name = null, $primaryKeyMemberName = null)
     {
-
-        // return the array with the SQL statements that has to be prepared
-        return array(
-            SqlStatementKeys::DELETE_PRODUCT_SUPER_LINK => $this->loadStatement(SqlStatementKeys::DELETE_PRODUCT_SUPER_LINK)
+        $skus = $row[MemberNames::SKU];
+        if (!is_array($skus)) {
+            $skus = [$skus];
+        }
+        // all skus that should not delete
+        $vals = implode(',', $skus);
+        // format skus as comma separated sql string
+        $vals = \str_replace(',', "','", "'".$vals."'");
+        // replace placeholder
+        $sql = str_replace(
+            array(':skus', ':parent_id'),
+            array($vals, $row[MemberNames::PARENT_ID]),
+            $this->loadStatement(SqlStatementKeys::DELETE_PRODUCT_SUPER_LINK)
         );
+
+        // delete the variants that are NOT in values (take a look at DELETE_PRODUCT_SUPER_LINK definition)
+        $this->getConnection()->query($sql);
     }
 }

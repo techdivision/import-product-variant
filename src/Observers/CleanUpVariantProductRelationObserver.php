@@ -126,19 +126,6 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
     }
 
     /**
-     * Return's the primary key of the product to load.
-     *
-     * @param array $product product array like from ProductBunchProcessorInterface::loadProduct
-     * @return integer The primary key of the product
-     */
-    protected function getPrimaryKey(array $product)
-    {
-        return isset($product[\TechDivision\Import\Product\Utils\MemberNames::ENTITY_ID])
-            ? $product[\TechDivision\Import\Product\Utils\MemberNames::ENTITY_ID] : null;
-    }
-
-
-    /**
      * Search for variants in the artefact in check differenz to database.
      * Remove entries in DB that not exist in artefact
      *
@@ -148,90 +135,75 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
     protected function findOldVariantsAndCleanUp()
     {
         $artefacts = $this->getSubject()->getArtefacts();
-        if (isset($artefacts[ProductVariantObserver::ARTEFACT_TYPE]) === null) {
+        if (!isset($artefacts[ProductVariantObserver::ARTEFACT_TYPE])) {
+            return;
+        }
+
+        $parentIdForArtefacts = $this->getLastEntityId();
+        if (!isset($artefacts[ProductVariantObserver::ARTEFACT_TYPE][$parentIdForArtefacts])) {
             return;
         }
 
         $actualVariants = [];
         $actualAttributes = [];
-        foreach ($artefacts[ProductVariantObserver::ARTEFACT_TYPE] as $allVariants) {
-            foreach ($allVariants as $variantData) {
-                $parentId = null;
-                $childId = null;
-                try {
-                    // try to load and map the parent ID
-                    $product = $this->getProductBunchProcessor()
-                        ->loadProduct($variantData[ColumnKeys::VARIANT_PARENT_SKU]);
-                    $parentId = $this->getPrimaryKey($product);
-                } catch (\Exception $e) {
-                    throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
-                }
-
-                try {
-                    // try to load and map the child ID
-                    $product =
-                        $this->getProductBunchProcessor()->loadProduct($variantData[ColumnKeys::VARIANT_CHILD_SKU]);
-                    $childId = $this->getPrimaryKey($product);
-                } catch (\Exception $e) {
-                    throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
-                }
-                if ($parentId && $childId) {
-                    $actualVariants[$parentId][$childId] = $childId;
-                    $actualAttributes[$parentId][$variantData[ColumnKeys::VARIANT_ATTRIBUTE_CODE]] =
-                        $variantData[ColumnKeys::VARIANT_ATTRIBUTE_CODE];
-                }
-            }
+        $allVariants = $artefacts[ProductVariantObserver::ARTEFACT_TYPE][$parentIdForArtefacts];
+        foreach ($allVariants as $variantData) {
+            $actualVariants[] = $variantData[ColumnKeys::VARIANT_CHILD_SKU];
+            $actualAttributes[$variantData[ColumnKeys::VARIANT_ATTRIBUTE_CODE]] =
+                $variantData[ColumnKeys::VARIANT_ATTRIBUTE_CODE];
         }
 
+        $parentId = $this->getLastPrimaryKey();
         // delete not exists import variants from database
-        $this->cleanUpVariantChildren($actualVariants);
-        $this->cleanUpVariantAttributes($actualAttributes);
+        $this->cleanUpVariantChildren($parentId, $actualVariants);
+        $this->cleanUpVariantAttributes($parentId, $actualAttributes);
     }
 
     /**
      * Delete not exists import variants from database
      *
-     * @param array $actualVariants array of variants
+     * @param int   $parentProductId parent product ID
+     * @param array $childData       array of variants
      * @return void
      * @throws \Exception
      */
-    protected function cleanUpVariantChildren(array $actualVariants)
+    protected function cleanUpVariantChildren($parentProductId, array $childData)
     {
+        // we don't want delete everything
+        if (empty($childData)) {
+            return;
+        }
         $parentSku = $this->getValue(ColumnKeys::SKU);
-        foreach ($actualVariants as $parentProductId => $childData) {
-            // load the existing variant entities for the product with the given SKU
-            foreach ($this->getProductVariantProcessor()
-                         ->loadProductSuperLinksFromParent($parentProductId) as $existingVariantChildren) {
-                if (in_array($existingVariantChildren[MemberNames::PRODUCT_ID], $childData)) {
-                    continue;
-                }
+        try {
+            // remove the old variantes from the database
+            $this->getProductVariantProcessor()
+                ->deleteProductSuperLink(
+                    array(
+                        MemberNames::PARENT_ID => $parentProductId,
+                        MemberNames::SKU => $childData
+                    )
+                );
 
-                try {
-                    // remove the old variantes from the database
-                    $this->getProductVariantProcessor()
-                        ->deleteProductSuperLink(array(MemberNames::LINK_ID => $existingVariantChildren[MemberNames::LINK_ID]));
-
-                    // log a debug message that the image has been removed
-                    $this->getSubject()
-                        ->getSystemLogger()
-                        ->info(
-                            $this->getSubject()->appendExceptionSuffix(
-                                sprintf(
-                                    'Successfully clean up variants for product with SKU "%s"',
-                                    $parentSku
-                                )
-                            )
-                        );
-                } catch (\Exception $e) {
-                    // log a warning if debug mode has been enabled and the file is NOT available
-                    if ($this->getSubject()->isDebugMode()) {
-                        $this->getSubject()
-                            ->getSystemLogger()
-                            ->critical($this->getSubject()->appendExceptionSuffix($e->getMessage()));
-                    } else {
-                        throw $e;
-                    }
-                }
+            // log a debug message that the image has been removed
+            $this->getSubject()
+                ->getSystemLogger()
+                ->debug(
+                    $this->getSubject()->appendExceptionSuffix(
+                        sprintf(
+                            'Successfully clean up variants for product with SKU "%s" except "%s"',
+                            $parentSku,
+                            implode(', ', $childData)
+                        )
+                    )
+                );
+        } catch (\Exception $e) {
+            // log a warning if debug mode has been enabled and the file is NOT available
+            if ($this->getSubject()->isDebugMode()) {
+                $this->getSubject()
+                    ->getSystemLogger()
+                    ->critical($this->getSubject()->appendExceptionSuffix($e->getMessage()));
+            } else {
+                throw $e;
             }
         }
     }
@@ -239,56 +211,68 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
     /**
      * Delete not exists import variants from database
      *
+     * @param int   $parentProductId  parent product ID
      * @param array $actualAttributes array of actual attributes
      * @return void
      * @throws \Exception
      */
-    protected function cleanUpVariantAttributes(array $actualAttributes)
+    protected function cleanUpVariantAttributes($parentProductId, array $actualAttributes)
     {
         $parentSku = $this->getValue(ColumnKeys::SKU);
         $allProductAttributes = $this->getSubject()->getAttributes();
-        foreach ($actualAttributes as $parentProductId => $attributeCodes) {
-            // search and collect attribute ID from $attributeCode
-            $attributeFromParentProduct = [];
-            foreach ($attributeCodes as $attributeCode) {
-                if (isset($allProductAttributes[$attributeCode])) {
-                    $attributeFromParentProduct[] = $allProductAttributes[$attributeCode][MemberNames::ATTRIBUTE_ID];
-                }
-            }
-            // load the existing super attributes for the product with the given SKU
-            foreach ($this->getProductVariantProcessor()
-                         ->loadProductSuperAttributesFromProduct($parentProductId) as $existingSuperAttribute) {
-                if (in_array($existingSuperAttribute[MemberNames::ATTRIBUTE_ID], $attributeFromParentProduct)) {
-                    continue;
-                }
-
-                try {
-                    // remove the old super attributes from the database
-                    $this->getProductVariantProcessor()
-                        ->deleteProductSuperAttribute(array(MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID => $existingSuperAttribute[MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID]));
-
-                    // log a debug message that the image has been removed
-                    $this->getSubject()
-                        ->getSystemLogger()
-                        ->info(
-                            $this->getSubject()->appendExceptionSuffix(
-                                sprintf(
-                                    'Successfully clean up attributes for product with SKU "%s"',
-                                    $parentSku
-                                )
-                            )
-                        );
-                } catch (\Exception $e) {
-                    // log a warning if debug mode has been enabled and the file is NOT available
-                    if ($this->getSubject()->isDebugMode()) {
-                        $this->getSubject()
-                            ->getSystemLogger()
-                            ->critical($this->getSubject()->appendExceptionSuffix($e->getMessage()));
-                    } else {
-                        throw $e;
-                    }
-                }
+        // search and collect attribute ID from $attributeCode
+        $attributeIdFromParentProduct = [];
+        foreach ($actualAttributes as $attributeCode) {
+            if (isset($allProductAttributes[$attributeCode])) {
+                $attributeIdFromParentProduct[] = $allProductAttributes[$attributeCode][MemberNames::ATTRIBUTE_ID];
             }
         }
+
+        // we don't want delete everything
+        if (empty($attributeIdFromParentProduct)) {
+            return;
+        }
+
+        try {
+            // remove the old super attributes from the database
+            $this->getProductVariantProcessor()
+                ->deleteProductSuperAttribute(
+                    array(
+                        MemberNames::PRODUCT_ID => $parentProductId,
+                        MemberNames::ATTRIBUTE_ID => $attributeIdFromParentProduct
+                    )
+                );
+
+            // log a debug message that the image has been removed
+            $this->getSubject()
+                ->getSystemLogger()
+                ->info(
+                    $this->getSubject()->appendExceptionSuffix(
+                        sprintf(
+                            'Successfully clean up attributes for product with SKU "%s"',
+                            $parentSku
+                        )
+                    )
+                );
+        } catch (\Exception $e) {
+            // log a warning if debug mode has been enabled and the file is NOT available
+            if ($this->getSubject()->isDebugMode()) {
+                $this->getSubject()
+                    ->getSystemLogger()
+                    ->critical($this->getSubject()->appendExceptionSuffix($e->getMessage()));
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Return's the PK to create the product => variant relation.
+     *
+     * @return integer The PK to create the relation with
+     */
+    protected function getLastPrimaryKey()
+    {
+        return $this->getLastEntityId();
     }
 }
