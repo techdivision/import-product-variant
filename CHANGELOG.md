@@ -1,3 +1,13 @@
+# Version 25.0.0
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Add techdivision/import-product-variant#22
+
 # Version 24.0.0
 
 ## Bugfixes
