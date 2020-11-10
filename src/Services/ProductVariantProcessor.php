@@ -520,6 +520,18 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     /**
      * Load's the product super link with the passed product/parent ID.
      *
+     * @param integer $parentId The entity ID of the product super link's parent product
+     *
+     * @return array The product super link
+     */
+    public function loadProductSuperLinksFromParent($parentId)
+    {
+        return $this->getProductSuperLinkRepository()->findAllByParentId($parentId);
+    }
+
+    /**
+     * Load's the product super link with the passed product/parent ID.
+     *
      * @param integer $productId The entity ID of the product super link's product
      * @param integer $parentId  The entity ID of the product super link's parent product
      *
@@ -541,6 +553,18 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     public function loadProductSuperAttribute($productId, $attributeId)
     {
         return $this->getProductSuperAttributeRepository()->findOneByProductIdAndAttributeId($productId, $attributeId);
+    }
+
+    /**
+     * Load's the product super attributes with the passed product ID.
+     *
+     * @param integer $productId The entity ID of the product super attribute's product
+     *
+     * @return array The product super attributes
+     */
+    public function loadProductSuperAttributesFromProduct($productId)
+    {
+        return $this->getProductSuperAttributeRepository()->findOneByProductId($productId);
     }
 
     /**
@@ -606,5 +630,31 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     public function persistProductSuperAttributeLabel($productSuperAttributeLabel, $name = null)
     {
         return $this->getProductSuperAttributeLabelAction()->persist($productSuperAttributeLabel, $name);
+    }
+
+    /**
+     * Delete's the passed product link data.
+     *
+     * @param array       $row  The product link to be deleted
+     * @param string|null $name The name of the prepared statement that has to be executed
+     *
+     * @return string The ID of the persisted entity
+     */
+    public function deleteProductSuperLink(array $row, $name = null)
+    {
+        return $this->getProductSuperLinkAction()->delete($row, $name);
+    }
+
+    /**
+     * Delete's the passed product super attribute data
+     *
+     * @param array       $row  The product super attribute id to be deleted
+     * @param string|null $name The name of the prepared statement that has to be executed
+     *
+     * @return string The ID of the persisted product super attribute entity
+     */
+    public function deleteProductSuperAttribute(array $row, $name = null)
+    {
+        return $this->getProductSuperAttributeAction()->delete($row, $name);
     }
 }

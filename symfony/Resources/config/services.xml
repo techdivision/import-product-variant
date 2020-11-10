@@ -73,6 +73,11 @@
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
             <argument type="service" id="import.util.sql.sanitizers"/>
         </service>
+        <service id="import_product_variant.action.processor.product.super.attribute.delete" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeDeleteProcessor">
+            <argument type="service" id="connection"/>
+            <argument type="service" id="import_product_variant.repository.sql.statement"/>
+            <argument type="service" id="import.util.sql.sanitizers"/>
+        </service>
         <service id="import_product_variant.action.processor.product.super.attribute.label.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperAttributeLabelCreateProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
@@ -84,6 +89,10 @@
             <argument type="service" id="import.util.sql.sanitizers"/>
         </service>
         <service id="import_product_variant.action.processor.product.super.link.create" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperLinkCreateProcessor">
+            <argument type="service" id="connection"/>
+            <argument type="service" id="import_product_variant.repository.sql.statement"/>
+        </service>
+        <service id="import_product_variant.action.processor.product.super.link.delete" class="TechDivision\Import\Product\Variant\Actions\Processors\ProductSuperLinkDeleteProcessor">
             <argument type="service" id="connection"/>
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
         </service>
@@ -100,6 +109,9 @@
         </service>
         <service id="import_product_variant.action.product.super.link" class="TechDivision\Import\Actions\GenericAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.link.create"/>
+            <argument type="service" id="import_product_variant.action.processor.product.super.link.update" on-invalid="ignore"/>
+            <argument type="service" id="import_product_variant.action.processor.product.super.link.delete"/>
+            <argument type="constant">TechDivision\Import\Product\Variant\Utils\MemberNames::LINK_ID</argument>
         </service>
 
         <service id="import_product_variant.loader.raw.entity" class="TechDivision\Import\Product\Variant\Loaders\RawEntityLoader">
@@ -150,6 +162,10 @@
             <argument type="service" id="import_product.processor.product.bunch"/>
             <argument type="string">%import_product_variant.param.sku.column.name%</argument>
         </service>
+        <service id="import_product_variant.observer.clean.up.product.variant" class="TechDivision\Import\Product\Variant\Observers\CleanUpVariantProductRelationObserver">
+            <argument type="service" id="import_product_variant.processor.product.variant"/>
+        </service>
+
 
         <!--
          | The DI configuration for the composite observers of the replace operation.

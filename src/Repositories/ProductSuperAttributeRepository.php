@@ -44,6 +44,11 @@ class ProductSuperAttributeRepository extends AbstractRepository implements Prod
     protected $productSuperAttributeStmt;
 
     /**
+     * @var \PDOStatement
+     */
+    private $productSuperAttributeByProductStmt;
+
+    /**
      * Initializes the repository's prepared statements.
      *
      * @return void
@@ -54,6 +59,8 @@ class ProductSuperAttributeRepository extends AbstractRepository implements Prod
         // initialize the prepared statements
         $this->productSuperAttributeStmt =
             $this->getConnection()->prepare($this->loadStatement(SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE));
+        $this->productSuperAttributeByProductStmt =
+            $this->getConnection()->prepare($this->loadStatement(SqlStatementKeys::PRODUCT_SUPER_ATTRIBUTE_BY_PRODUCT));
     }
 
     /**
@@ -76,5 +83,25 @@ class ProductSuperAttributeRepository extends AbstractRepository implements Prod
         // load and return the product super attribute with the passed product/attribute ID
         $this->productSuperAttributeStmt->execute($params);
         return $this->productSuperAttributeStmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Load's the product super attribute with the passed product/attribute ID.
+     *
+     * @param integer $productId The entity ID of the product super attribute's product
+     *
+     * @return array The product super attribute
+     */
+    public function findOneByProductId($productId)
+    {
+
+        // initialize the params
+        $params = array(
+            MemberNames::PRODUCT_ID  => $productId,
+        );
+
+        // load and return the product super attributes with the passed product ID
+        $this->productSuperAttributeByProductStmt->execute($params);
+        return $this->productSuperAttributeByProductStmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

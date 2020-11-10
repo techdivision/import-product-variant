@@ -40,6 +40,20 @@ class MemberNames extends \TechDivision\Import\Product\Utils\MemberNames
     const PARENT_ID = 'parent_id';
 
     /**
+     * Name for the member 'product_id'.
+     *
+     * @var string
+     */
+    const PRODUCT_ID = 'product_id';
+
+    /**
+     * Name for the member 'link_id'.
+     *
+     * @var string
+     */
+    const LINK_ID = 'link_id';
+
+    /**
      * Name for the member 'child_id'.
      *
      * @var string
