@@ -84,14 +84,17 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
                 SET ${column-values:catalog_product_super_attribute_label}
               WHERE value_id = :value_id',
         SqlStatementKeys::DELETE_PRODUCT_SUPER_LINK =>
-            'DELETE FROM ${table:catalog_product_super_link}
-               WHERE parent_id = :parent_id AND product_id NOT IN (
-               SELECT entity_id FROM catalog_product_entity WHERE sku IN (:skus)
-               )',
+            'DELETE
+               FROM ${table:catalog_product_super_link}
+              WHERE parent_id = :parent_id
+                AND product_id
+             NOT IN (SELECT entity_id FROM catalog_product_entity WHERE sku IN (:skus))',
         SqlStatementKeys::DELETE_PRODUCT_SUPER_ATTRIBUTE =>
             'DELETE
-                FROM ${table:catalog_product_super_attribute}
-               WHERE product_id = :product_id and attribute_id not in (:attribute_ids)',
+               FROM ${table:catalog_product_super_attribute}
+              WHERE product_id = :product_id
+                AND attribute_id
+             NOT IN (:attribute_ids)',
     );
 
     /**

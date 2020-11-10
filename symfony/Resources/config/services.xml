@@ -164,7 +164,6 @@
         </service>
         <service id="import_product_variant.observer.clean.up.product.variant" class="TechDivision\Import\Product\Variant\Observers\CleanUpVariantProductRelationObserver">
             <argument type="service" id="import_product_variant.processor.product.variant"/>
-            <argument type="service" id="import_product.processor.product.bunch"/>
         </service>
 
 

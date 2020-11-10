@@ -22,7 +22,7 @@ namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
-use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
+use TechDivision\Import\Actions\Processors\AbstractUpdateProcessor;
 
 /**
  * The product super link create processor implementation.
@@ -33,7 +33,7 @@ use TechDivision\Import\Actions\Processors\AbstractCreateProcessor;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperLinkDeleteProcessor extends AbstractCreateProcessor
+class ProductSuperLinkDeleteProcessor extends AbstractUpdateProcessor
 {
 
     /**
@@ -47,15 +47,22 @@ class ProductSuperLinkDeleteProcessor extends AbstractCreateProcessor
      */
     public function execute($row, $name = null, $primaryKeyMemberName = null)
     {
+
+        // load the SKUs from the row
         $skus = $row[MemberNames::SKU];
+
+        // make sure we've an array
         if (!is_array($skus)) {
             $skus = [$skus];
         }
-        // all skus that should not delete
+
+        // all SKUs that should NOT be deleted
         $vals = implode(',', $skus);
-        // format skus as comma separated sql string
-        $vals = \str_replace(',', "','", "'".$vals."'");
-        // replace placeholder
+
+        // concatenate the SKUs as comma separated SQL string
+        $vals = str_replace(',', "','", "'" . $vals . "'");
+
+        // replace the placeholders
         $sql = str_replace(
             array(':skus', ':parent_id'),
             array($vals, $row[MemberNames::PARENT_ID]),

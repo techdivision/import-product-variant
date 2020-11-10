@@ -22,7 +22,7 @@ namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
-use TechDivision\Import\Actions\Processors\AbstractUpdateProcessor;
+use TechDivision\Import\Actions\Processors\AbstractDeleteProcessor;
 
 /**
  * The product super attribute update processor implementation.
@@ -33,23 +33,8 @@ use TechDivision\Import\Actions\Processors\AbstractUpdateProcessor;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperAttributeDeleteProcessor extends AbstractUpdateProcessor
+class ProductSuperAttributeDeleteProcessor extends AbstractDeleteProcessor
 {
-
-    /**
-     * Return's the array with the SQL statements that has to be prepared.
-     *
-     * @return array The SQL statements to be prepared
-     * @see \TechDivision\Import\Actions\Processors\AbstractBaseProcessor::getStatements()
-     */
-    protected function getStatements()
-    {
-
-        // return the array with the SQL statements that has to be prepared
-        return array(
-            SqlStatementKeys::DELETE_PRODUCT_SUPER_ATTRIBUTE => $this->loadStatement(SqlStatementKeys::DELETE_PRODUCT_SUPER_ATTRIBUTE)
-        );
-    }
 
     /**
      * Delete all variants that are not actual imported
@@ -62,13 +47,19 @@ class ProductSuperAttributeDeleteProcessor extends AbstractUpdateProcessor
      */
     public function execute($row, $name = null, $primaryKeyMemberName = null)
     {
+
+        // load the attribute IDs from the row
         $attributeIds = $row[MemberNames::ATTRIBUTE_ID];
+
+        // make sure we've an array
         if (!is_array($attributeIds)) {
             $attributeIds = [$attributeIds];
         }
-        // all skus that should not delete
+
+        // all attribute IDs that should NOT be deleted
         $vals = implode(',', $attributeIds);
-        // replace placeholder
+
+        // replace the placeholders
         $sql = str_replace(
             array(':attribute_ids', ':product_id'),
             array($vals, $row[MemberNames::PRODUCT_ID]),
