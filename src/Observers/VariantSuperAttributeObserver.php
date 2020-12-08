@@ -148,7 +148,9 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
 
         // extract the child SKU and attribute code from the row
         $parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU);
+        $childSku= $this->getValue(ColumnKeys::VARIANT_CHILD_SKU);
         $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
+        $attributeSetCode = $this->getValue(ColumnKeys::ATTRIBUTE_SET_CODE);
 
         // query whether or not the super attribute has already been processed
         if ($this->hasBeenProcessedRelation($parentSku, $attributeCode, RelationTypes::VARIANT_SUPER_ATTRIBUTE)) {
@@ -165,7 +167,26 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             // load the EAV attribute with the found attribute code
             $this->setEavAttribute($this->getEavAttributeByAttributeCode($attributeCode));
         } catch (\Exception $e) {
-            throw $this->wrapException(array(ColumnKeys::VARIANT_ATTRIBUTE_CODE), $e);
+            $this->getSystemLogger()->critical(
+                sprintf(
+                    'Can\'t find attribute code "%s" in attribut set "%s" for variant SKU "%s" to create simple SKU "%s"',
+                    $attributeCode,
+                    $attributeSetCode,
+                    $parentSku,
+                    $childSku
+                )
+            );
+            // if we're NOT in debug mode, re-throw a more detailed exception
+            $wrappedException = $this->wrapException(array(ColumnKeys::VARIANT_ATTRIBUTE_CODE), $e);
+
+            // query whether or not, debug mode is enabled
+            if ($this->isDebugMode()) {
+                // log a warning and return immediately
+                $this->getSystemLogger()->warning($wrappedException->getMessage());
+                return;
+            }
+            // else, throw the exception
+            throw $wrappedException;
         }
 
         try {
