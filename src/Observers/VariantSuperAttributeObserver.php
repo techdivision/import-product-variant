@@ -167,7 +167,8 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             // load the EAV attribute with the found attribute code
             $this->setEavAttribute($this->getEavAttributeByAttributeCode($attributeCode));
         } catch (\Exception $e) {
-            $this->getSystemLogger()->critical(
+            // prepare a more detailed error message
+            $message = $this->appendExceptionSuffix(
                 sprintf(
                     'Can\'t find attribute code "%s" in attribut set "%s" for variant SKU "%s" to create simple SKU "%s"',
                     $attributeCode,
@@ -176,8 +177,12 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
                     $childSku
                 )
             );
+
             // if we're NOT in debug mode, re-throw a more detailed exception
-            $wrappedException = $this->wrapException(array(ColumnKeys::VARIANT_ATTRIBUTE_CODE), $e);
+            $wrappedException = $this->wrapException(
+                array(ColumnKeys::VARIANT_ATTRIBUTE_CODE),
+                new \Exception($message, null, $e)
+            );
 
             // query whether or not, debug mode is enabled
             if ($this->isDebugMode()) {
@@ -185,6 +190,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
                 return;
             }
+
             // else, throw the exception
             throw $wrappedException;
         }
