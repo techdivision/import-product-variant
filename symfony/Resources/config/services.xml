@@ -97,17 +97,17 @@
             <argument type="service" id="import_product_variant.repository.sql.statement"/>
         </service>
 
-        <service id="import_product_variant.action.product.super.attribute" class="TechDivision\Import\Actions\GenericIdentifierAction">
+        <service id="import_product_variant.action.product.super.attribute" class="TechDivision\Import\Dbal\Actions\GenericIdentifierAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.create"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.update"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.delete" on-invalid="ignore"/>
             <argument type="constant">TechDivision\Import\Product\Variant\Utils\MemberNames::PRODUCT_SUPER_ATTRIBUTE_ID</argument>
         </service>
-        <service id="import_product_variant.action.product.super.attribute.label" class="TechDivision\Import\Actions\GenericAction">
+        <service id="import_product_variant.action.product.super.attribute.label" class="TechDivision\Import\Dbal\Actions\GenericAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.label.create"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.attribute.label.update"/>
         </service>
-        <service id="import_product_variant.action.product.super.link" class="TechDivision\Import\Actions\GenericAction">
+        <service id="import_product_variant.action.product.super.link" class="TechDivision\Import\Dbal\Actions\GenericAction">
             <argument type="service" id="import_product_variant.action.processor.product.super.link.create"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.link.update" on-invalid="ignore"/>
             <argument type="service" id="import_product_variant.action.processor.product.super.link.delete"/>
