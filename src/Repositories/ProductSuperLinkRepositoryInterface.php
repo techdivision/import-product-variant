@@ -20,7 +20,7 @@
 
 namespace TechDivision\Import\Product\Variant\Repositories;
 
-use TechDivision\Import\Repositories\RepositoryInterface;
+use TechDivision\Import\Dbal\Repositories\RepositoryInterface;
 
 /**
  * Interface for repository implementations to load product super link data.
