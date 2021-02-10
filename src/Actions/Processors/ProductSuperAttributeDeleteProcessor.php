@@ -22,7 +22,7 @@ namespace TechDivision\Import\Product\Variant\Actions\Processors;
 
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
 use TechDivision\Import\Product\Variant\Utils\SqlStatementKeys;
-use TechDivision\Import\Actions\Processors\AbstractDeleteProcessor;
+use TechDivision\Import\Dbal\Collection\Actions\Processors\AbstractBaseProcessor;
 
 /**
  * The product super attribute update processor implementation.
@@ -33,7 +33,7 @@ use TechDivision\Import\Actions\Processors\AbstractDeleteProcessor;
  * @link      https://github.com/techdivision/import-product-variant
  * @link      http://www.techdivision.com
  */
-class ProductSuperAttributeDeleteProcessor extends AbstractDeleteProcessor
+class ProductSuperAttributeDeleteProcessor extends AbstractBaseProcessor
 {
 
     /**
