@@ -146,11 +146,9 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
     protected function process()
     {
 
-        // extract the child SKU and attribute code from the row
+        // extract the parent SKU and attribute code from the row
         $parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU);
-        $childSku= $this->getValue(ColumnKeys::VARIANT_CHILD_SKU);
         $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
-        $attributeSetCode = $this->getValue(ColumnKeys::ATTRIBUTE_SET_CODE);
 
         // query whether or not the super attribute has already been processed
         if ($this->hasBeenProcessedRelation($parentSku, $attributeCode, RelationTypes::VARIANT_SUPER_ATTRIBUTE)) {
@@ -167,6 +165,9 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             // load the EAV attribute with the found attribute code
             $this->setEavAttribute($this->getEavAttributeByAttributeCode($attributeCode));
         } catch (\Exception $e) {
+            // extract the child SKU and attribute set code from the row
+            $childSku= $this->getValue(ColumnKeys::VARIANT_CHILD_SKU);
+            $attributeSetCode = $this->getValue(ColumnKeys::ATTRIBUTE_SET_CODE);
             // prepare a more detailed error message
             $message = $this->appendExceptionSuffix(
                 sprintf(
