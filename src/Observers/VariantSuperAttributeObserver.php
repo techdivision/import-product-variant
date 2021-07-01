@@ -145,7 +145,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
      */
     protected function process()
     {
-
         // extract the parent SKU and attribute code from the row
         $parentSku = $this->getValue(ColumnKeys::VARIANT_PARENT_SKU);
         $attributeCode = $this->getValue(ColumnKeys::VARIANT_ATTRIBUTE_CODE);
@@ -193,7 +192,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
                 // throw the exception when the strict mode enable
                 throw $wrappedException;
             }
-
         }
 
         try {
@@ -282,7 +280,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
      */
     protected function prepareProductSuperAttributeAttributes()
     {
-
         // load the parent ID
         $parentId = $this->getParentId();
 
@@ -308,7 +305,6 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
      */
     protected function prepareProductSuperAttributeLabelAttributes()
     {
-
         // extract the parent/child ID as well as option value and variation label from the row
         $label = $this->getValue(ColumnKeys::VARIANT_VARIATION_LABEL);
         $useDefault = $this->getValue(ColumnKeys::VARIANT_VARIATION_USE_DEFAULT, 0);
