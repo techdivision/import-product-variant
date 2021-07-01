@@ -189,11 +189,11 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             if ($this->isDebugMode()) {
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
-                return;
+            } elseif ($this->isStrictMode()) {
+                // throw the exception when the strict mode enable
+                throw $wrappedException;
             }
 
-            // else, throw the exception
-            throw $wrappedException;
         }
 
         try {
@@ -231,11 +231,10 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             if ($this->isDebugMode()) {
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
-                return;
+            } elseif ($this->isStrictMode()) {
+                // throw the exception when the strict mode enable
+                throw $wrappedException;
             }
-
-            // else, throw the exception
-            throw $wrappedException;
         }
     }
 
