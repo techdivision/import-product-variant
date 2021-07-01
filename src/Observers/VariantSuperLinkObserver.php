@@ -125,10 +125,10 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
                 return;
+            } elseif ($this->isStrictMode()) {
+                // else, throw the exception is strict mode on
+                throw $wrappedException;
             }
-
-            // else, throw the exception
-            throw $wrappedException;
         }
     }
 
