@@ -8,7 +8,15 @@
 
 * Add techdivision/import-product-variant#22
 
-# Version 24.0.0
+# Version 24.0.1
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Prepare generic workflow and defined deprecated classes# Version 24.0.0
 
 ## Bugfixes
 
