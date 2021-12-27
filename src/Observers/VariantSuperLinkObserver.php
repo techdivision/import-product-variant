@@ -14,6 +14,7 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
+use TechDivision\Import\Utils\RegistryKeys;
 use TechDivision\Import\Product\Utils\RelationTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
@@ -87,7 +88,22 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             // try to load and map the child ID
             $this->childId = $this->mapChildSku($childSku);
         } catch (\Exception $e) {
-            throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
+            if (!$this->getSubject()->isStrictMode()) {
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_CHILD_SKU =>  $e->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
+                $this->skipRow();
+            } else {
+                throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
+            }
         }
 
         try {
@@ -119,10 +135,10 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
                 return;
-            } elseif ($this->isStrictMode()) {
-                // else, throw the exception is strict mode on
-                throw $wrappedException;
             }
+            // else, throw the exception is strict mode on
+            throw $wrappedException;
+
         }
     }
 
