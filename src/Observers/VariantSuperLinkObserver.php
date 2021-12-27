@@ -138,7 +138,6 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             }
             // else, throw the exception is strict mode on
             throw $wrappedException;
-
         }
     }
 

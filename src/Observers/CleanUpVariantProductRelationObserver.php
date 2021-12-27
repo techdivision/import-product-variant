@@ -160,7 +160,7 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
                 $this->getSubject()
                      ->getSystemLogger()
                      ->critical($this->getSubject()->appendExceptionSuffix($e->getMessage()));
-            } elseif ($this->getSubject()->isStrictMode()) {
+            } else {
                 throw $e;
             }
         }
