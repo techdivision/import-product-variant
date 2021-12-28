@@ -81,7 +81,22 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             // try to load and map the parent ID
             $this->parentId = $this->mapSku($parentSku);
         } catch (\Exception $e) {
-            throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
+            if (!$this->getSubject()->isStrictMode()) {
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_PARENT_SKU => $e->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
+                $this->skipRow();
+            } else {
+                throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
+            }
         }
 
         try {
@@ -131,9 +146,20 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             );
 
             // query whether or not, debug mode is enabled
-            if ($this->isDebugMode()) {
+            if (!$this->isStrictMode()) {
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_PARENT_SKU =>  $wrappedException->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
                 return;
             }
             // else, throw the exception is strict mode on

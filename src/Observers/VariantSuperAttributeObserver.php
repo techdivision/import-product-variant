@@ -15,6 +15,7 @@
 namespace TechDivision\Import\Product\Variant\Observers;
 
 use TechDivision\Import\Dbal\Utils\EntityStatus;
+use TechDivision\Import\Utils\RegistryKeys;
 use TechDivision\Import\Utils\StoreViewCodes;
 use TechDivision\Import\Utils\BackendTypeKeys;
 use TechDivision\Import\Observers\StateDetectorInterface;
@@ -178,15 +179,25 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
                 new \Exception($message, null, $e)
             );
 
-            // query whether or not, debug mode is enabled
-            if ($this->isDebugMode()) {
+            // Query whether strict mode is disabled
+            if (!$this->isStrictMode()) {
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_ATTRIBUTE_CODE =>  $wrappedException->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
             }
 
             // else, throw the exception
             throw $wrappedException;
-
         }
 
         try {
@@ -221,13 +232,24 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             );
 
             // query whether or not, debug mode is enabled
-            if ($this->isDebugMode()) {
+            if (!$this->isStrictMode()) {
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_PARENT_SKU =>  $wrappedException->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
+            } else {
+                // else, throw the exception
+                throw $wrappedException;
             }
-
-            // else, throw the exception
-            throw $wrappedException;
         }
     }
 
