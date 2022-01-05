@@ -82,6 +82,9 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             $this->parentId = $this->mapSku($parentSku);
         } catch (\Exception $e) {
             if (!$this->getSubject()->isStrictMode()) {
+                $this->getSubject()
+                    ->getSystemLogger()
+                    ->warning($this->getSubject()->appendExceptionSuffix($e->getMessage()));
                 $this->mergeStatus(
                     array(
                         RegistryKeys::NO_STRICT_VALIDATIONS => array(
@@ -103,6 +106,9 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             // try to load and map the child ID
             $this->childId = $this->mapChildSku($childSku);
         } catch (\Exception $e) {
+            $this->getSubject()
+                ->getSystemLogger()
+                ->warning($this->getSubject()->appendExceptionSuffix($e->getMessage()));
             if (!$this->getSubject()->isStrictMode()) {
                 $this->mergeStatus(
                     array(
