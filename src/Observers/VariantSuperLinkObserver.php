@@ -14,6 +14,7 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
+use TechDivision\Import\Utils\RegistryKeys;
 use TechDivision\Import\Product\Utils\RelationTypes;
 use TechDivision\Import\Product\Variant\Utils\ColumnKeys;
 use TechDivision\Import\Product\Variant\Utils\MemberNames;
@@ -80,14 +81,52 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             // try to load and map the parent ID
             $this->parentId = $this->mapSku($parentSku);
         } catch (\Exception $e) {
-            throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
+            if (!$this->getSubject()->isStrictMode()) {
+                $this->getSubject()
+                    ->getSystemLogger()
+                    ->warning($this->getSubject()->appendExceptionSuffix($e->getMessage()));
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_PARENT_SKU => $e->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
+                $this->skipRow();
+                return;
+            } else {
+                throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
+            }
         }
 
         try {
             // try to load and map the child ID
             $this->childId = $this->mapChildSku($childSku);
         } catch (\Exception $e) {
-            throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
+            $this->getSubject()
+                ->getSystemLogger()
+                ->warning($this->getSubject()->appendExceptionSuffix($e->getMessage()));
+            if (!$this->getSubject()->isStrictMode()) {
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_CHILD_SKU =>  $e->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
+                $this->skipRow();
+                return;
+            } else {
+                throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
+            }
         }
 
         try {
@@ -115,13 +154,23 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             );
 
             // query whether or not, debug mode is enabled
-            if ($this->isDebugMode()) {
+            if (!$this->isStrictMode()) {
                 // log a warning and return immediately
                 $this->getSystemLogger()->warning($wrappedException->getMessage());
+                $this->mergeStatus(
+                    array(
+                        RegistryKeys::NO_STRICT_VALIDATIONS => array(
+                            basename($this->getFilename()) => array(
+                                $this->getLineNumber() => array(
+                                    ColumnKeys::VARIANT_PARENT_SKU =>  $wrappedException->getMessage()
+                                )
+                            )
+                        )
+                    )
+                );
                 return;
             }
-
-            // else, throw the exception
+            // else, throw the exception is strict mode on
             throw $wrappedException;
         }
     }
