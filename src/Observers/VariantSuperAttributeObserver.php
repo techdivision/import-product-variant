@@ -194,6 +194,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
                         )
                     )
                 );
+                return;
             }
 
             // else, throw the exception
@@ -246,10 +247,11 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
                         )
                     )
                 );
-            } else {
-                // else, throw the exception
-                throw $wrappedException;
+                return;
             }
+
+            // else, throw the exception
+            throw $wrappedException;
         }
     }
 

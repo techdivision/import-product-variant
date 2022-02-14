@@ -97,6 +97,7 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
                     )
                 );
                 $this->skipRow();
+                return;
             } else {
                 throw $this->wrapException(array(ColumnKeys::VARIANT_PARENT_SKU), $e);
             }
@@ -122,6 +123,7 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
                     )
                 );
                 $this->skipRow();
+                return;
             } else {
                 throw $this->wrapException(array(ColumnKeys::VARIANT_CHILD_SKU), $e);
             }
