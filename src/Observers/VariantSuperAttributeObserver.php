@@ -176,7 +176,7 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
             // if we're NOT in debug mode, re-throw a more detailed exception
             $wrappedException = $this->wrapException(
                 array(ColumnKeys::VARIANT_ATTRIBUTE_CODE),
-                new \Exception($message, null, $e)
+                new \Exception($message, '', $e)
             );
 
             // Query whether strict mode is disabled

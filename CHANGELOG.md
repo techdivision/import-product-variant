@@ -1,3 +1,13 @@
+# Version 25.0.1
+
+## Bugfixes
+
+* Fix error for php8.1: The Exception code must not be empty
+
+## Features
+
+* None
+
 # Version 25.0.0
 
 ## Bugfixes
