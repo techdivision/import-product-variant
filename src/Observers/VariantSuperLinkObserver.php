@@ -150,7 +150,7 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
             // if we're NOT in debug mode, re-throw a more detailed exception
             $wrappedException = $this->wrapException(
                 array(ColumnKeys::VARIANT_PARENT_SKU, ColumnKeys::VARIANT_CHILD_SKU),
-                new \Exception($message, null, $e)
+                new \Exception($message, 0, $e)
             );
 
             // query whether or not, debug mode is enabled
