@@ -1,3 +1,9 @@
+# Version 25.0.5
+
+## Bugfixes
+
+* Start fix php8.2 deprecated warnings
+
 # Version 25.0.4
 
 ## Bugfixes

@@ -41,6 +41,21 @@ class VariantSuperLinkObserver extends AbstractProductImportObserver
     protected $productVariantProcessor;
 
     /**
+     * The parent ID.
+     *
+     * @var integer
+     */
+    protected $parentId;
+
+    /**
+     * The child ID.
+     *
+     * @var integer
+     */
+    protected $childId;
+
+
+    /**
      * Initialize the observer with the passed product variant processor instance.
      *
      * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
