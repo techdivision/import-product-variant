@@ -90,6 +90,13 @@ class SqlStatementKeys extends \TechDivision\Import\Product\Utils\SqlStatementKe
     const DELETE_PRODUCT_SUPER_ATTRIBUTE = 'delete.product_super_attribute';
 
     /**
+     * The SQL statement to delete a product relation.
+     *
+     * @var string
+     */
+    public const DELETE_PRODUCT_RELATION = 'delete.product_relation';
+
+    /**
      * The SQL statement to create a new product super attribute label.
      *
      * @var string
