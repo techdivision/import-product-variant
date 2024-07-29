@@ -89,6 +89,12 @@ class SqlStatementRepository extends \TechDivision\Import\Product\Repositories\S
               WHERE product_id = :product_id
                 AND attribute_id
              NOT IN (:attribute_ids)',
+        SqlStatementKeys::DELETE_PRODUCT_RELATION =>
+            'DELETE
+               FROM ${table:catalog_product_relation}
+              WHERE parent_id = :parent_id
+                AND child_id
+             NOT IN (SELECT `entity_id` FROM ${table:catalog_product_entity} WHERE `sku` IN (:skus))',
     );
 
     /**

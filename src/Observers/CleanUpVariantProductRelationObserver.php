@@ -14,6 +14,7 @@
 
 namespace TechDivision\Import\Product\Variant\Observers;
 
+use Exception;
 use TechDivision\Import\Utils\ProductTypes;
 use TechDivision\Import\Observers\StateDetectorInterface;
 use TechDivision\Import\Product\Observers\AbstractProductImportObserver;
@@ -154,6 +155,7 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
             // delete not exists import variants from database
             $this->cleanUpVariantChildren($parentId, $actualVariants);
             $this->cleanUpVariantAttributes($parentId, $actualAttributes);
+            $this->cleanUpVariantRelation($parentId, $actualVariants);
         } catch (\Exception $e) {
             // log a warning if debug mode has been enabled
             if ($this->getSubject()->isDebugMode()) {
@@ -197,7 +199,7 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
         // log a debug message that the image has been removed
         $this->getSubject()
              ->getSystemLogger()
-             ->debug(
+             ->info(
                  $this->getSubject()->appendExceptionSuffix(
                      sprintf(
                          'Successfully clean up variants for product with SKU "%s" except "%s"',
@@ -259,6 +261,44 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
                      )
                  )
              );
+    }
+
+    /**
+     * Delete not exists import relations from database.
+     *
+     * @param int $parentProductId The ID of the parent product
+     * @param array $childData The array of variants
+     *
+     * @return void
+     * @throws Exception
+     */
+    protected function cleanUpVariantRelation(int $parentProductId, array $childData)
+    {
+        // we don't want to delete everything
+        if (empty($childData)) {
+            return;
+        }
+
+        // load the SKU of the parent product
+        $parentSku = $this->getValue(ColumnKeys::SKU);
+
+        // remove the old variants from the database
+        $this->getProductVariantProcessor()->deleteProductRelation(
+            [
+                MemberNames::PARENT_ID => $parentProductId,
+                MemberNames::SKU => $childData,
+            ]
+        );
+
+        $subject = $this->getSubject();
+        $subject->getSystemLogger()->info(
+            $subject->appendExceptionSuffix(
+                sprintf(
+                    'Successfully clean up relations for product with SKU "%s"',
+                    $parentSku
+                )
+            )
+        );
     }
 
     /**

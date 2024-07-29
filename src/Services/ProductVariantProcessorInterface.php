@@ -209,4 +209,14 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
      * @return string The ID of the persisted product super attribute entity
      */
     public function deleteProductSuperAttribute(array $row, $name = null);
+
+    /**
+     * Deletes the passed product relation data.
+     *
+     * @param array $row The product relation to be deleted
+     * @param null|string $name The name of the prepared statement that has to be executed
+     *
+     * @return void
+     */
+    public function deleteProductRelation(array $row, string $name = null): void;
 }

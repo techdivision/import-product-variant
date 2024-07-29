@@ -651,4 +651,17 @@ class ProductVariantProcessor implements ProductVariantProcessorInterface
     {
         return $this->getProductSuperAttributeAction()->delete($row, $name);
     }
+
+    /**
+     * Deletes the passed product relation data.
+     *
+     * @param array $row The product relation to be deleted
+     * @param string|null $name The name of the prepared statement that has to be executed
+     *
+     * @return void
+     */
+    public function deleteProductRelation(array $row, string $name = null): void
+    {
+        $this->getProductRelationAction()->delete($row, $name);
+    }
 }
