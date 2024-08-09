@@ -1,3 +1,9 @@
+# Version 26.0.2
+
+## Bugfixes
+
+* Fix php warning undefined array key
+
 # Version 26.0.1
 
 ## Bugfixes
@@ -13,6 +19,18 @@
 * Update dependencies
 * Add PHP ">=8.1" support
 * Remove PHP 7.3 support
+
+# Version 25.0.7
+
+## Bugfixes
+
+* Fix php warning undefined array key
+
+# Version 25.0.6
+
+## Bugfixes
+
+* refactoring clean-up-links and clean-up-variants to remove old data from relation table
 
 # Version 25.0.5
 
