@@ -46,11 +46,11 @@ class CleanUpVariantProductRelationObserver extends AbstractProductImportObserve
      * Initialize the observer with the passed product variant processor instance.
      *
      * @param \TechDivision\Import\Product\Variant\Services\ProductVariantProcessorInterface $productVariantProcessor The product variant processor instance
-     * @param StateDetectorInterface|null                                                    $stateDetector           The state detector instance to use
+     * @param StateDetectorInterface|null $stateDetector           The state detector instance to use
      */
     public function __construct(
         ProductVariantProcessorInterface $productVariantProcessor,
-        StateDetectorInterface $stateDetector = null
+        ?StateDetectorInterface $stateDetector = null
     ) {
 
         // pass the state detector to the parent constructor

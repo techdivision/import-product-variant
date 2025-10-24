@@ -218,5 +218,5 @@ interface ProductVariantProcessorInterface extends ProductProcessorInterface, Pr
      *
      * @return void
      */
-    public function deleteProductRelation(array $row, string $name = null): void;
+    public function deleteProductRelation(array $row, ?string $name = null): void;
 }

@@ -108,9 +108,9 @@ class VariantSuperAttributeObserver extends AbstractProductImportObserver implem
      */
     public function __construct(
         ProductVariantProcessorInterface $productVariantProcessor,
-        AttributeLoaderInterface $attributeLoader = null,
-        Collection $entityMergers = null,
-        StateDetectorInterface $stateDetector = null
+        ?AttributeLoaderInterface $attributeLoader = null,
+        ?Collection $entityMergers = null,
+        ?StateDetectorInterface $stateDetector = null
     ) {
 
         // initialize the product variant processor and the attribute loader instance
